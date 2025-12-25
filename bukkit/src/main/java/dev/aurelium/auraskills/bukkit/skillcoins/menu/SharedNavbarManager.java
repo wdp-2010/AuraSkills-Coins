@@ -104,17 +104,13 @@ public class SharedNavbarManager {
         addGlassPanes(inv);
         
         // Previous page button (slot 48)
-        if (page > 0) {
-            addPreviousPageButton(inv, page);
-        }
+        addPreviousPageButton(inv, page);
         
         // Page info (slot 49)
         addPageInfo(inv, page, maxPage);
         
         // Next page button (slot 50)
-        if (page < maxPage) {
-            addNextPageButton(inv, page, maxPage);
-        }
+        addNextPageButton(inv, page, maxPage);
         
         // Back button (slot 53)
         addBackButton(inv);
@@ -222,6 +218,19 @@ public class SharedNavbarManager {
         // Finally, apply the replacer again to handle any data placeholders that were in the messages
         text = TextUtil.replace(text, replacer);
         
+        // Replace color placeholders and translate color codes
+        text = text.replace("<gold>", "&6")
+            .replace("<yellow>", "&e")
+            .replace("<aqua>", "&b")
+            .replace("<white>", "&f")
+            .replace("<gray>", "&7")
+            .replace("<green>", "&a")
+            .replace("<red>", "&c")
+            .replace("<blue>", "&9")
+            .replace("<purple>", "&5")
+            .replace("<black>", "&0");
+        text = ChatColor.translateAlternateColorCodes('&', text);
+        
         return text;
     }
     
@@ -289,29 +298,45 @@ public class SharedNavbarManager {
     
     private void addPreviousPageButton(Inventory inv, int page) {
         if (navbarConfig == null || !navbarConfig.contains("navbar.previous_page")) return;
-        
-        Replacer replacer = new Replacer()
-            .map("{page}", () -> String.valueOf(page));
-        
-        String materialName = navbarConfig.getString("navbar.previous_page.material", "ARROW");
-        Material material = Material.valueOf(materialName.toUpperCase());
-        
-        ItemStack prev = new ItemStack(material);
-        ItemMeta meta = prev.getItemMeta();
-        if (meta != null) {
-            String displayName = navbarConfig.getString("navbar.previous_page.display_name", "{{previous_page}}");
-            displayName = applyMenuPlaceholders(displayName, null, "navbar", replacer);
-            meta.setDisplayName(displayName);
-            
-            List<String> lore = new ArrayList<>();
-            List<String> configLore = navbarConfig.getStringList("navbar.previous_page.lore");
-            for (String line : configLore) {
-                line = applyMenuPlaceholders(line, null, "navbar", replacer);
-                lore.add(line);
+
+        ItemStack prev;
+
+        if (page != 0) {
+            // If no previous page, create a disabled previous button
+            prev = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+            ItemMeta meta = prev.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(ChatColor.GRAY + "No Previous Page");
+                prev.setItemMeta(meta);
             }
-            meta.setLore(lore);
-            prev.setItemMeta(meta);
+
+        } else {
+            // Only add previous page button if there is a previous page
+            Replacer replacer = new Replacer()
+                .map("{page}", () -> String.valueOf(page));
+            
+            String materialName = navbarConfig.getString("navbar.previous_page.material", "ARROW");
+            Material material = Material.valueOf(materialName.toUpperCase());
+            
+            prev = new ItemStack(material);
+            ItemMeta meta = prev.getItemMeta();
+            if (meta != null) {
+                String displayName = navbarConfig.getString("navbar.previous_page.display_name", "{{previous_page}}");
+                displayName = applyMenuPlaceholders(displayName, null, "navbar", replacer);
+                meta.setDisplayName(displayName);
+                
+                List<String> lore = new ArrayList<>();
+                List<String> configLore = navbarConfig.getStringList("navbar.previous_page.lore");
+                for (String line : configLore) {
+                    line = applyMenuPlaceholders(line, null, "navbar", replacer);
+                    lore.add(line);
+                }
+                meta.setLore(lore);
+                prev.setItemMeta(meta);
+            }
+
         }
+
         
         int slot = navbarConfig.getInt("navbar.previous_page.slot", 48);
         inv.setItem(slot, prev);
@@ -350,28 +375,42 @@ public class SharedNavbarManager {
     
     private void addNextPageButton(Inventory inv, int page, int maxPage) {
         if (navbarConfig == null || !navbarConfig.contains("navbar.next_page")) return;
-        
-        Replacer replacer = new Replacer()
-            .map("{page}", () -> String.valueOf(page + 2));
-        
-        String materialName = navbarConfig.getString("navbar.next_page.material", "ARROW");
-        Material material = Material.valueOf(materialName.toUpperCase());
-        
-        ItemStack next = new ItemStack(material);
-        ItemMeta meta = next.getItemMeta();
-        if (meta != null) {
-            String displayName = navbarConfig.getString("navbar.next_page.display_name", "{{next_page}}");
-            displayName = applyMenuPlaceholders(displayName, null, "navbar", replacer);
-            meta.setDisplayName(displayName);
+
+        ItemStack next;
+
+        if (page < maxPage) {
+            // Only add next page button if there is a next page
+            Replacer replacer = new Replacer()
+                .map("{page}", () -> String.valueOf(page + 2));
             
-            List<String> lore = new ArrayList<>();
-            List<String> configLore = navbarConfig.getStringList("navbar.next_page.lore");
-            for (String line : configLore) {
-                line = applyMenuPlaceholders(line, null, "navbar", replacer);
-                lore.add(line);
+            String materialName = navbarConfig.getString("navbar.next_page.material", "ARROW");
+            Material material = Material.valueOf(materialName.toUpperCase());
+            
+            next = new ItemStack(material);
+            ItemMeta meta = next.getItemMeta();
+            if (meta != null) {
+                String displayName = navbarConfig.getString("navbar.next_page.display_name", "{{next_page}}");
+                displayName = applyMenuPlaceholders(displayName, null, "navbar", replacer);
+                meta.setDisplayName(displayName);
+                
+                List<String> lore = new ArrayList<>();
+                List<String> configLore = navbarConfig.getStringList("navbar.next_page.lore");
+                for (String line : configLore) {
+                    line = applyMenuPlaceholders(line, null, "navbar", replacer);
+                    lore.add(line);
+                }
+                meta.setLore(lore);
+                next.setItemMeta(meta);
             }
-            meta.setLore(lore);
-            next.setItemMeta(meta);
+
+        } else {
+            // If no next page, create a disabled next button
+            next = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+            ItemMeta meta = next.getItemMeta();
+            if (meta != null) {
+                meta.setDisplayName(ChatColor.GRAY + "No Next Page");
+                next.setItemMeta(meta);
+            }
         }
         
         int slot = navbarConfig.getInt("navbar.next_page.slot", 50);
