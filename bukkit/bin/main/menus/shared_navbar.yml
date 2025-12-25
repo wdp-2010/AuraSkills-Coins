@@ -9,7 +9,8 @@ navbar:
     display_name: '<gold>{{balance}}'
     lore:
     - ''
-    - '<gray>{{balance_text}}: <white>{balance}'
+    - '<yellow><white>{coins} ⛃'
+    - '<aqua><white>{tokens} 🎟'
     
   glass:
     - slot: 46
