@@ -6,7 +6,6 @@ import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.common.skillcoins.CurrencyType;
 import dev.aurelium.auraskills.common.skillcoins.EconomyProvider;
 import dev.aurelium.auraskills.common.user.User;
-import dev.aurelium.auraskills.bukkit.skillcoins.menu.SharedNavbarManager;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -34,8 +33,8 @@ public class SkillLevelPurchaseMenu {
     private final EconomyProvider economy;
     private final SharedNavbarManager navbarManager;
     
-    private static final String SELECTION_TITLE = ChatColor.of("#00FFFF") + "✪ " + ChatColor.of("#FFFFFF") + "Select Skill";
-    private static final String QUICK_SELECT_TITLE = ChatColor.of("#FFFF00") + "⚡ " + ChatColor.of("#FFFFFF") + "Quick Select";
+    private static final String SELECTION_TITLE = ChatColor.DARK_GRAY + "Select Skill";
+    private static final String QUICK_SELECT_TITLE = ChatColor.DARK_GRAY + "Quick Select";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
     private static final int TOKENS_PER_LEVEL = 10;
     private static final int MIN_QUANTITY = 1;

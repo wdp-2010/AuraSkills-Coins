@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.logging.Level; 
 
 /**
@@ -219,16 +221,42 @@ public class SharedNavbarManager {
         text = TextUtil.replace(text, replacer);
         
         // Replace color placeholders and translate color codes
-        text = text.replace("<gold>", "&6")
+        text = text.replace("<black>", "&0")
+            .replace("<dark_blue>", "&1")
+            .replace("<dark_green>", "&2")
+            .replace("<dark_aqua>", "&3")
+            .replace("<dark_red>", "&4")
+            .replace("<dark_purple>", "&5")
+            .replace("<gold>", "&6")
             .replace("<yellow>", "&e")
+            .replace("<dark_yellow>", "&6")
+            .replace("<green>", "&a")
             .replace("<aqua>", "&b")
+            .replace("<blue>", "&9")
+            .replace("<light_purple>", "&d")
+            .replace("<purple>", "&5")
             .replace("<white>", "&f")
             .replace("<gray>", "&7")
-            .replace("<green>", "&a")
-            .replace("<red>", "&c")
-            .replace("<blue>", "&9")
-            .replace("<purple>", "&5")
-            .replace("<black>", "&0");
+            .replace("<dark_gray>", "&8")
+            // Formatting codes
+            .replace("<bold>", "&l")
+            .replace("<italic>", "&o")
+            .replace("<underline>", "&n")
+            .replace("<strikethrough>", "&m")
+            .replace("<obfuscated>", "&k")
+            .replace("<reset>", "&r");
+        
+        // Replace hex color codes <#RRGGBB>
+        Pattern hexPattern = Pattern.compile("<#([0-9a-fA-F]{6})>");
+        Matcher matcher = hexPattern.matcher(text);
+        StringBuffer sb = new StringBuffer();
+        while (matcher.find()) {
+            String hex = matcher.group(1);
+            matcher.appendReplacement(sb, ChatColor.of("#" + hex).toString());
+        }
+        matcher.appendTail(sb);
+        text = sb.toString();
+        
         text = ChatColor.translateAlternateColorCodes('&', text);
         
         return text;

@@ -42,8 +42,8 @@ public class ShopMainMenu {
     
     private final AuraSkills plugin;
     private final EconomyProvider economy;
-    private static final String MENU_TITLE = ChatColor.AQUA + "❖ " + ChatColor.WHITE + "⛃ SkillCoins Shop";
-    private static final String SKILL_SELECT_TITLE = ChatColor.GOLD + "✦ " + ChatColor.WHITE + "Select Skill to Buy";
+    private static final String MENU_TITLE = ChatColor.DARK_GRAY + "SkillCoins Shop";
+    private static final String SKILL_SELECT_TITLE = ChatColor.DARK_GRAY + "Select Skill to Buy";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
     
     // Track players in skill selection mode

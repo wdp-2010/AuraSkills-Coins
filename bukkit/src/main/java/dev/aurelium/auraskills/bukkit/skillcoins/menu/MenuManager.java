@@ -395,7 +395,10 @@ public class MenuManager implements Listener {
             TokenExchangeMenu menu = tokenMenus.get(playerId);
             if (menu != null && menu.isMenuTitle(title)) {
                 menu.handleClose(event);
-                tokenMenus.remove(playerId);
+                // DON'T remove here - keep token menu registered to allow navigation between
+                // the main token menu and the quick-select preset menu (preserve behavior
+                // consistent with SkillLevelPurchaseMenu)
+                // tokenMenus.remove(playerId);
             }
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error closing token menu", e);

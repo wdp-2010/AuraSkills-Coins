@@ -40,7 +40,7 @@ public class LevelBuyMenu {
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0");
     
     // Title prefix to identify this menu
-    private static final String TITLE_PREFIX = ChatColor.of("#FFD700") + "✦ ";
+    private static final String TITLE_PREFIX = ChatColor.DARK_GRAY + "Buy ";
     
     // Session data per player
     private final Map<UUID, Skill> selectedSkill = new ConcurrentHashMap<>();
@@ -165,8 +165,9 @@ public class LevelBuyMenu {
         return title.startsWith(TITLE_PREFIX);
     }
     
-    private String getMenuTitle(Skill skill) {
-        return TITLE_PREFIX + ChatColor.WHITE + "Buy " + skill.getDisplayName(Locale.ENGLISH) + " Levels";
+    private String getMenuTitle(Skill skill, UUID uuid) {
+        return TITLE_PREFIX + ChatColor.DARK_GRAY + skill.getDisplayName(Locale.ENGLISH) + " Levels - Page " +
+                (currentPage.getOrDefault(uuid, 0) + 1);
     }
     
     private void updateInventory(Player player) {
@@ -189,15 +190,18 @@ public class LevelBuyMenu {
             selectedLevel = Math.max(currentLevel + 1, Math.min(maxLevel, selectedLevel));
             selectedUpToLevel.put(uuid, selectedLevel);
             
-            String title = getMenuTitle(skill);
+            String title = getMenuTitle(skill, uuid);
             Inventory inv = null;
             boolean isNewInventory = false;
             
             try {
                 Inventory currentInv = player.getOpenInventory().getTopInventory();
-                if (currentInv != null && currentInv.getSize() == 54 &&
-                    player.getOpenInventory().getTitle().startsWith(TITLE_PREFIX)) {
-                    inv = currentInv;
+                if (currentInv != null && currentInv.getSize() == 54) {
+                    String openTitle = player.getOpenInventory().getTitle();
+                    // Only reuse the open inventory if the title matches exactly; otherwise recreate to update title
+                    if (openTitle.equals(title)) {
+                        inv = currentInv;
+                    }
                 }
             } catch (Exception e) {
                 // Will create new inventory
@@ -233,16 +237,14 @@ public class LevelBuyMenu {
                 if (backMeta != null) {
                     String displayName;
                     List<String> lore = new ArrayList<>();
-                    lore.add("");
                     if (currentOrigin == MenuManager.MenuOrigin.SKILL_SELECT) {
-                        displayName = ChatColor.of("#55FF55") + "← Back to Skills";
-                        lore.add(ChatColor.of("#808080") + "Return to the /skills menu");
+                        displayName = ChatColor.of("#55FF55") + "← Back";
                     } else if (currentOrigin == MenuManager.MenuOrigin.SKILL_ROAD) {
-                        displayName = ChatColor.of("#55FF55") + "← Back to Skills";
-                        lore.add(ChatColor.of("#808080") + "Return to the main skills menu");
+                        displayName = ChatColor.of("#55FF55") + "← Back to road";
+                        lore.add(" ");
+                        lore.add(ChatColor.of("#808080") + "Return to skill road");
                     } else {
-                        displayName = ChatColor.of("#55FF55") + "← Back to Shop";
-                        lore.add(ChatColor.of("#808080") + "Return to the SkillCoins shop");
+                        displayName = ChatColor.of("#55FF55") + "← Back";
                     }
                     backMeta.setDisplayName(displayName);
                     backMeta.setLore(lore);

@@ -8,8 +8,9 @@ navbar:
     material: gold_nugget
     display_name: '<gold>Balance:'
     lore:
-    - '<yellow><white>{coins} ⛃'
-    - '<aqua><white>{tokens} 🎟'
+    - ' '
+    - '<yellow>SkillCoins: <dark_yellow>{coins} ⛃'
+    - '<green>Tokens: <dark_green>{tokens} 🎟' 
     
   glass:
     - slot: 46
@@ -30,6 +31,7 @@ navbar:
     material: arrow
     display_name: '<gold>{{previous_page}}'
     lore:
+    - ' '
     - '<yellow>{{previous_page_click}}'
     
   page_info:
@@ -37,6 +39,7 @@ navbar:
     material: paper
     display_name: '<aqua>Pages'
     lore:
+    - ' '
     - '<gray>{{page_text}}: <white>{page} <gray>/ {total_pages}'
     
   next_page:
@@ -44,6 +47,7 @@ navbar:
     material: arrow
     display_name: '<gold>{{next_page}}'
     lore:
+    - ' '
     - '<yellow>{{next_page_click}}'
     
   back_close:

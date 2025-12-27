@@ -6,7 +6,6 @@ import dev.aurelium.auraskills.api.mana.ManaAbilities;
 import dev.aurelium.auraskills.api.mana.ManaAbility;
 import dev.aurelium.auraskills.api.skill.Skill;
 import dev.aurelium.auraskills.api.skill.Skills;
-import dev.aurelium.auraskills.bukkit.skillcoins.menu.LevelBuyMenu;
 import dev.aurelium.auraskills.api.util.NumberUtil;
 import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.bukkit.menus.shared.GlobalItems;
@@ -17,6 +16,8 @@ import dev.aurelium.auraskills.common.config.Option;
 import dev.aurelium.auraskills.common.reward.SkillReward;
 import dev.aurelium.auraskills.common.reward.type.MoneyReward;
 import dev.aurelium.auraskills.common.user.User;
+import dev.aurelium.auraskills.common.message.MessageKey;
+import dev.aurelium.auraskills.common.skillcoins.CurrencyType;
 import dev.aurelium.auraskills.common.util.math.RomanNumber;
 import dev.aurelium.auraskills.common.util.text.TextUtil;
 import dev.aurelium.slate.action.trigger.ClickTrigger;
@@ -54,6 +55,45 @@ public class LevelProgressionMenu {
         menu.replace("skill_key", p -> ((Skill) p.menu().getProperty("skill")).getId().getKey());
 
         menu.replaceTitle("page", p -> String.valueOf(p.menu().getCurrentPage() + 1));
+
+        // Navbar message replaces to match SharedNavbarManager parser
+        menu.replace("previous_page", p -> getNavbarMessage("previous_page", p.locale()));
+        menu.replace("next_page", p -> getNavbarMessage("next_page", p.locale()));
+        menu.replace("back", p -> getNavbarMessage("back", p.locale()));
+        menu.replace("page_text", p -> getNavbarMessage("page_text", p.locale()));
+        menu.replace("previous_page_click", p -> getNavbarMessage("previous_page_click", p.locale()));
+        menu.replace("next_page_click", p -> getNavbarMessage("next_page_click", p.locale()));
+        menu.replace("back_click", p -> getNavbarMessage("back_click", p.locale()));
+
+        // Data placeholders for navbar
+        menu.replace("coins", p -> {
+            if (plugin.getSkillCoinsEconomy() == null) return "0";
+            return String.format("%,.0f", plugin.getSkillCoinsEconomy().getBalance(p.player().getUniqueId(), CurrencyType.COINS));
+        });
+        menu.replace("tokens", p -> {
+            if (plugin.getSkillCoinsEconomy() == null) return "0";
+            return String.format("%,.0f", plugin.getSkillCoinsEconomy().getBalance(p.player().getUniqueId(), CurrencyType.TOKENS));
+        });
+        menu.replace("page", p -> String.valueOf(p.menu().getCurrentPage() + 1));
+        menu.replace("total_pages", p -> {
+
+            Skill skill = (Skill) p.menu().getProperty("skill");
+
+            int itemsPerPage = 24;
+
+            LoadedMenu loadedMenu = plugin.getSlate().getLoadedMenu("level_progression");
+
+            if (loadedMenu != null) {
+
+                itemsPerPage = (int) loadedMenu.options().getOrDefault("items_per_page", 24);
+
+            }
+
+            int startLevel = p.menu().getOption(Integer.class, "start_level", 1);
+
+            return String.valueOf((skill.getMaxLevel() - startLevel) / itemsPerPage + 1);
+
+        });
 
         menu.properties(m -> {
             int itemsPerPage = 24;
@@ -531,6 +571,16 @@ public class LevelProgressionMenu {
 
     private int getLbSize(Skill skill) {
         return plugin.getLeaderboardManager().getLeaderboard(skill).size();
+    }
+
+    private String getNavbarMessage(String key, java.util.Locale locale) {
+        MessageKey navbarKey = MessageKey.of("menus.navbar." + key);
+        String message = plugin.getMessageProvider().getRaw(navbarKey, locale);
+        if (message.equals(navbarKey.getPath())) { // if not found, try common
+            MessageKey commonKey = MessageKey.of("menus.common." + key);
+            message = plugin.getMessageProvider().getRaw(commonKey, locale);
+        }
+        return message;
     }
 
 }

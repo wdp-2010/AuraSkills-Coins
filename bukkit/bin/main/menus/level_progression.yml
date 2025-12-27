@@ -66,10 +66,11 @@ items:
   balance:
     pos: 5,0
     material: gold_nugget
-    display_name: '<gold>{{balance}}'
+    display_name: '<gold>Balance:'
     lore:
-    - ''
-    - '<gray>{{balance_text}}: <white>{balance}'
+    - ' '
+    - '<yellow>SkillCoins: <gold>{coins} ⛃'
+    - '<green>Tokens: <dark_green>{tokens} 🎟'
   glass_left_1:
     pos: 5,1
     material: black_stained_glass_pane
@@ -87,10 +88,9 @@ items:
   page_info:
     pos: 5,4
     material: paper
-    display_name: '<aqua>{{page}}'
+    display_name: '<aqua>Pages'
     lore:
-    - ''
-    - '<gray>{{page_text}}: <white>{page}'
+    - '<gray>{{page_text}}: <white>{page} <gray>/ {total_pages}'
   next_page:
     pos: 5,5
     material: arrow

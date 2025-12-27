@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -31,8 +32,8 @@ import java.util.logging.Level;
  */
 public class TokenExchangeMenu {
     
-    private static final String MENU_TITLE = "§a✦ §f🎟 Token Exchange";
-    private static final String PRESET_TITLE = "§e⚡ §fQuick Select Amount";
+    private static final String MENU_TITLE = "§a🎟" + ChatColor.DARK_GRAY + " Token Exchange";
+    private static final String PRESET_TITLE = "§e⚡" + ChatColor.DARK_GRAY + " Quick Select Amount";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
     private static final int COINS_PER_TOKEN = 100; // Base rate: 100 coins = 1 token
     private static final int MIN_QUANTITY = 1;
@@ -85,6 +86,35 @@ public class TokenExchangeMenu {
      */
     public boolean isMenuTitle(String title) {
         return title.equals(MENU_TITLE) || title.equals(PRESET_TITLE);
+    }
+    /**
+     * Create an item with specified properties
+     * @param material The material of the item
+     * @param name The display name of the item
+     * @param lore The lore lines of the item
+     * @return The created ItemStack
+     */
+
+    private ItemStack createItem(Material material, String name, String... lore) {
+        ItemStack item = new ItemStack(material);
+        ItemMeta meta = item.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ChatColor.GOLD + name);
+            
+            List<String> loreList = new ArrayList<>();
+            for (String line : lore) {
+                if (line != null && !line.isEmpty()) {
+                    loreList.add(ChatColor.translateAlternateColorCodes('§', line));
+                }
+            }
+            if (!loreList.isEmpty()) {
+                meta.setLore(loreList);
+            }
+            
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
+            item.setItemMeta(meta);
+        }
+        return item;
     }
     
     /**
@@ -150,16 +180,16 @@ public class TokenExchangeMenu {
         ItemStack tokenDisplay = new ItemStack(Material.PAPER, Math.min(quantity, 64));
         ItemMeta tokenMeta = tokenDisplay.getItemMeta();
         if (tokenMeta != null) {
-            tokenMeta.setDisplayName(ChatColor.of("#00FFFF") + "✦ 🎟 Tokens");
+            tokenMeta.setDisplayName(ChatColor.of("#00FFFF") + "✦ Tokens");
             
             List<String> lore = new ArrayList<>();
             lore.add("");
-            lore.add(ChatColor.of("#808080") + "🎟 to Purchase: " + ChatColor.of("#FFFFFF") + quantity);
-            lore.add(ChatColor.of("#808080") + "Exchange Rate: " + ChatColor.of("#FFD700") + 
+            lore.add(ChatColor.of("#d0de34ff") + "Tokens to purchase: " + ChatColor.of("#FFFFFF") + quantity);
+            lore.add(ChatColor.GRAY + "Exchange Rate: " + ChatColor.of("#FFD700") + 
                     COINS_PER_TOKEN + " ⛃" + ChatColor.of("#808080") + " = " + 
-                    ChatColor.of("#00FFFF") + "1 🎟");
+                    ChatColor.GREEN + "1 🎟");
             lore.add("");
-            lore.add(ChatColor.of("#FFD700") + "Total Cost: " + ChatColor.of("#FFFFFF") + 
+            lore.add(ChatColor.WHITE + "Total Cost: " + ChatColor.GOLD + 
                     MONEY_FORMAT.format(totalCoins) + " ⛃");
             lore.add("");
             
@@ -235,20 +265,9 @@ public class TokenExchangeMenu {
         inv.setItem(31, quickSelect);
         
         // Balance display (slot 45)
-        ItemStack balanceItem = new ItemStack(Material.GOLD_INGOT);
-        ItemMeta balanceMeta = balanceItem.getItemMeta();
-        if (balanceMeta != null) {
-            balanceMeta.setDisplayName(ChatColor.of("#FFD700") + "Your Balance");
-            List<String> balanceLore = new ArrayList<>();
-            balanceLore.add("");
-            balanceLore.add(ChatColor.of("#FFD700") + "⛃: " + ChatColor.of("#FFFFFF") + 
-                    MONEY_FORMAT.format(coinBalance));
-            balanceLore.add(ChatColor.of("#00FFFF") + "🎟: " + ChatColor.of("#FFFFFF") + 
-                    MONEY_FORMAT.format(tokenBalance));
-            balanceMeta.setLore(balanceLore);
-            balanceItem.setItemMeta(balanceMeta);
-        }
-        inv.setItem(45, balanceItem);
+        inv.setItem(45,createItem(Material.GOLD_NUGGET, "Balance: ", " ",
+            "§6Balance: §e" + String.format("%.0f", coinBalance),
+            "§aTokens: §2" + String.format("%.0f", tokenBalance)));
         
         // Confirm button (slot 49)
         boolean canAfford = coinBalance >= totalCoins;
@@ -276,19 +295,6 @@ public class TokenExchangeMenu {
             confirm.setItemMeta(confirmMeta);
         }
         inv.setItem(49, confirm);
-        
-        // Back button (slot 48) - matches Quest plugin navbar pattern
-        ItemStack back = new ItemStack(Material.ARROW);
-        ItemMeta backMeta = back.getItemMeta();
-        if (backMeta != null) {
-            backMeta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
-            List<String> backLore = new ArrayList<>();
-            backLore.add("");
-            backLore.add(ChatColor.of("#808080") + "Return to main shop");
-            backMeta.setLore(backLore);
-            back.setItemMeta(backMeta);
-        }
-        inv.setItem(48, back);
         
         // Back button (slot 53) - use arrow to return to main shop
         ItemStack close = new ItemStack(Material.ARROW);
@@ -547,6 +553,8 @@ public class TokenExchangeMenu {
                 try {
                     if (event.getPlayer().getOpenInventory().getTopInventory().getSize() == 0) {
                         cleanupPlayerData(uuid);
+                        // Unregister player from MenuManager now that no menu is open
+                        MenuManager.getInstance(plugin).unregisterPlayer(uuid);
                     }
                 } catch (Exception e) {
                     plugin.getLogger().log(Level.WARNING, "Error in delayed cleanup", e);
