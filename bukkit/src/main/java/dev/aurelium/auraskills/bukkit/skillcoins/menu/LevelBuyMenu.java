@@ -165,9 +165,8 @@ public class LevelBuyMenu {
         return title.startsWith(TITLE_PREFIX);
     }
     
-    private String getMenuTitle(Skill skill, int page) {
-        return TITLE_PREFIX + ChatColor.WHITE + "Buy " + skill.getDisplayName(Locale.ENGLISH) + " Levels" + 
-               ChatColor.GRAY + " [" + (page + 1) + "]";
+    private String getMenuTitle(Skill skill) {
+        return TITLE_PREFIX + ChatColor.WHITE + "Buy " + skill.getDisplayName(Locale.ENGLISH) + " Levels";
     }
     
     private void updateInventory(Player player) {
@@ -190,22 +189,7 @@ public class LevelBuyMenu {
             selectedLevel = Math.max(currentLevel + 1, Math.min(maxLevel, selectedLevel));
             selectedUpToLevel.put(uuid, selectedLevel);
             
-            String title = getMenuTitle(skill, page);
-            // Append origin marker for reliable back destination detection (use persistent MenuManager origin)
-            MenuManager manager = MenuManager.getInstance(plugin);
-            MenuManager.MenuOrigin origin = MenuManager.MenuOrigin.SKILL_SELECT;
-            if (manager != null) {
-                origin = manager.getMenuOrigin(uuid).orElse(MenuManager.MenuOrigin.SKILL_SELECT);
-            }
-            String originMarker = "";
-            if (origin == MenuManager.MenuOrigin.SKILL_SELECT) {
-                originMarker = " [FROM:SKILL_SELECT]";
-            } else if (origin == MenuManager.MenuOrigin.SKILL_ROAD) {
-                originMarker = " [FROM:ROAD]";
-            } else {
-                originMarker = " [FROM:SHOP]";
-            }
-            title = title + originMarker;
+            String title = getMenuTitle(skill);
             Inventory inv = null;
             boolean isNewInventory = false;
             
@@ -239,16 +223,21 @@ public class LevelBuyMenu {
             
             // Override the back button visually to reflect where it will return to
             try {
+                MenuManager manager = MenuManager.getInstance(plugin);
+                MenuManager.MenuOrigin currentOrigin = MenuManager.MenuOrigin.SKILL_SELECT;
+                if (manager != null) {
+                    currentOrigin = manager.getMenuOrigin(uuid).orElse(MenuManager.MenuOrigin.SKILL_SELECT);
+                }
                 ItemStack backItem = new ItemStack(Material.ARROW);
                 ItemMeta backMeta = backItem.getItemMeta();
                 if (backMeta != null) {
                     String displayName;
                     List<String> lore = new ArrayList<>();
                     lore.add("");
-                    if (origin == MenuManager.MenuOrigin.SKILL_SELECT) {
+                    if (currentOrigin == MenuManager.MenuOrigin.SKILL_SELECT) {
                         displayName = ChatColor.of("#55FF55") + "← Back to Skills";
                         lore.add(ChatColor.of("#808080") + "Return to the /skills menu");
-                    } else if (origin == MenuManager.MenuOrigin.SKILL_ROAD) {
+                    } else if (currentOrigin == MenuManager.MenuOrigin.SKILL_ROAD) {
                         displayName = ChatColor.of("#55FF55") + "← Back to Skills";
                         lore.add(ChatColor.of("#808080") + "Return to the main skills menu");
                     } else {
@@ -499,68 +488,32 @@ public class LevelBuyMenu {
             case 52: // Glass pane (navbar) - no action
                 break;
             case 53: // Back (navbar)
-                // First, consult persistent MenuManager origin if set
+                // Consult persistent MenuManager origin
                 MenuManager manager = MenuManager.getInstance(plugin);
-                MenuManager.MenuOrigin origin = null;
+                MenuManager.MenuOrigin origin = MenuManager.MenuOrigin.SKILL_SELECT; // Default fallback
                 if (manager != null) {
-                    origin = manager.getMenuOrigin(uuid).orElse(null);
+                    origin = manager.getMenuOrigin(uuid).orElse(MenuManager.MenuOrigin.SKILL_SELECT);
                 }
-
-                // If no persistent origin, fallback to title/flags
-                boolean wasSkillSelect = false;
-                boolean wasFromRoad = false;
-                String currentTitle = "";
-                if (origin == null) {
-                    try {
-                        currentTitle = player.getOpenInventory().getTitle();
-                    } catch (Exception ignored) {}
-                    final boolean wasSkillSelect0 = currentTitle.contains("FROM:SKILL_SELECT");
-                    final boolean wasFromRoad0 = currentTitle.contains("FROM:ROAD");
-                    wasSkillSelect = (wasSkillSelect0 || cameFromSkillSelect.getOrDefault(uuid, false));
-                    wasFromRoad = (wasFromRoad0 || cameFromRoad.getOrDefault(uuid, false));
-                }
-
-
 
                 // Perform cleanup now because we won't rely on the close event to clear session
                 cleanupSession(player);
 
-                // Use the resolved source inside the scheduled task so clearing can't affect decision
-                final MenuManager.MenuOrigin finalOrigin = origin; // may be null
-                final boolean finalWasSkillSelect = wasSkillSelect;
-                final boolean finalWasFromRoad = wasFromRoad;
+                // Use the resolved source inside the scheduled task
+                final MenuManager.MenuOrigin finalOrigin = origin;
                 Bukkit.getScheduler().runTask(plugin, () -> {
                     try {
-                        if (finalOrigin != null) {
-                            switch (finalOrigin) {
-                                case SKILL_SELECT -> {
-                                    SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
-                                    skillMenu.open(player);
-                                }
-                                case SKILL_ROAD -> {
-                                    try {
-                                        plugin.getSlate().openMenu(player, "skills", Map.of());
-                                    } catch (Exception e) {
-                                        new dev.aurelium.auraskills.bukkit.menus.util.LevelProgressionOpener(plugin).open(player, skill);
-                                    }
-                                }
+                        switch (finalOrigin) {
+                            case SKILL_SELECT -> {
+                                SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
+                                skillMenu.open(player);
+                            }
+                            case SKILL_ROAD -> {
+                                new dev.aurelium.auraskills.bukkit.menus.util.LevelProgressionOpener(plugin).open(player, skill);
+                            }
                                 case SHOP_MAIN -> {
                                     SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
                                     skillMenu.open(player);
                                 }
-                            }
-                        } else if (finalWasSkillSelect) {
-                            SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
-                            skillMenu.open(player);
-                        } else if (finalWasFromRoad) {
-                            try {
-                                plugin.getSlate().openMenu(player, "skills", Map.of());
-                            } catch (Exception e) {
-                                new dev.aurelium.auraskills.bukkit.menus.util.LevelProgressionOpener(plugin).open(player, skill);
-                            }
-                        } else {
-                            SkillLevelPurchaseMenu skillMenu = new SkillLevelPurchaseMenu(plugin, economy);
-                            skillMenu.open(player);
                         }
                     } finally {
                         // Clear the persistent origin after navigation attempt
