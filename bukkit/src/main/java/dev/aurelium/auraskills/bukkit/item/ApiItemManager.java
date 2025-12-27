@@ -22,7 +22,6 @@ import org.spongepowered.configurate.serialize.SerializationException;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings("deprecation")
 public class ApiItemManager implements ItemManager {
 
     private final AuraSkills plugin;
@@ -161,7 +160,6 @@ public class ApiItemManager implements ItemManager {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public ItemStack parseItem(ConfigurationNode config) {
         return itemParser.parseItem(config);
     }
@@ -176,7 +174,6 @@ public class ApiItemManager implements ItemManager {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public List<ItemStack> parseMultipleItems(ConfigurationNode config) {
         try {
             return itemParser.parseMultipleItems(config);

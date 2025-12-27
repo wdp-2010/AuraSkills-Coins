@@ -1,7 +1,5 @@
 package dev.aurelium.auraskills.common.skillcoins;
 
-import dev.aurelium.auraskills.common.AuraSkillsPlugin;
-
 import java.util.Map;
 import java.util.UUID;
 

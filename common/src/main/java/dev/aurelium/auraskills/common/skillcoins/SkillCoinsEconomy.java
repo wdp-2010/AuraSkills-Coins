@@ -12,12 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class SkillCoinsEconomy implements EconomyProvider {
     
-    private final AuraSkillsPlugin plugin;
     private final Map<UUID, Map<CurrencyType, Double>> balances;
     private final SkillCoinsStorage storage;
     
     public SkillCoinsEconomy(AuraSkillsPlugin plugin, SkillCoinsStorage storage) {
-        this.plugin = plugin;
         this.storage = storage;
         this.balances = new ConcurrentHashMap<>();
     }

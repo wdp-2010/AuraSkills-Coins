@@ -1,8 +1,6 @@
 package dev.aurelium.auraskills.bukkit.item;
 
 import com.google.common.collect.Sets;
-import de.tr7zw.changeme.nbtapi.NBT;
-import de.tr7zw.changeme.nbtapi.NBTType;
 import dev.aurelium.auraskills.api.event.item.ItemDisableEvent;
 import dev.aurelium.auraskills.api.event.item.ItemEnableEvent;
 import dev.aurelium.auraskills.api.item.ModifierType;
@@ -145,21 +143,8 @@ public class ItemStateManager {
         return new Result(item, event.getToReload());
     }
 
-    private ItemStack convertLegacyItem(ItemStack item) {
-        if (plugin.isNbtApiDisabled()) return item;
+    // Legacy convertLegacyItem removed — legacy conversion is no longer used (kept in VCS if needed)
 
-        SkillsItem skillsItem = new SkillsItem(item, plugin);
-        NBT.modify(item, skillsItem::convertFromLegacy);
-        item = skillsItem.getItem();
-
-        NBT.modify(item, nbt -> {
-            if (nbt.hasTag("AureliumSkills", NBTType.NBTTagCompound)) {
-                nbt.removeKey("AureliumSkills");
-            }
-        });
-
-        return item;
-    }
 
     private ModifierType getModifierType(EquipmentSlot slot) {
         return switch (slot) {

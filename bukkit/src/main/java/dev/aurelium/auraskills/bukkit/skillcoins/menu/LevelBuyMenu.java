@@ -5,7 +5,7 @@ import dev.aurelium.auraskills.bukkit.AuraSkills;
 import dev.aurelium.auraskills.common.skillcoins.CurrencyType;
 import dev.aurelium.auraskills.common.skillcoins.EconomyProvider;
 import dev.aurelium.auraskills.common.user.User;
-import dev.aurelium.auraskills.bukkit.skillcoins.menu.SharedNavbarManager;
+
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -356,72 +356,8 @@ public class LevelBuyMenu {
         }
     }
     
-    private void addNavigation(Inventory inv, int page, int maxLevel) {
-        int maxPage = (maxLevel - 1) / ITEMS_PER_PAGE;
-        
-        // Back button (slot 45) - Arrow style like Quest plugin
-        ItemStack back = new ItemStack(Material.ARROW);
-        ItemMeta backMeta = back.getItemMeta();
-        if (backMeta != null) {
-            backMeta.setDisplayName(ChatColor.GREEN + "« Back");
-            List<String> lore = new ArrayList<>();
-            lore.add("");
-            lore.add(ChatColor.GRAY + "Return to shop");
-            backMeta.setLore(lore);
-            back.setItemMeta(backMeta);
-        }
-        inv.setItem(45, back);
-        
-        // Close button (slot 46) - matches level progression layout
-        ItemStack close = new ItemStack(Material.BARRIER);
-        ItemMeta closeMeta = close.getItemMeta();
-        if (closeMeta != null) {
-            closeMeta.setDisplayName(ChatColor.RED + "✖ Close");
-            close.setItemMeta(closeMeta);
-        }
-        inv.setItem(46, close);
-        
-        // Previous page (slot 48)
-        if (page > 0) {
-            ItemStack prev = new ItemStack(Material.ARROW);
-            ItemMeta prevMeta = prev.getItemMeta();
-            if (prevMeta != null) {
-                prevMeta.setDisplayName(ChatColor.GOLD + "« Previous Page");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.GRAY + "Go to page " + page);
-                prevMeta.setLore(lore);
-                prev.setItemMeta(prevMeta);
-            }
-            inv.setItem(48, prev);
-        }
-        
-        // Page indicator (slot 49)
-        ItemStack pageItem = new ItemStack(Material.PAPER);
-        ItemMeta pageMeta = pageItem.getItemMeta();
-        if (pageMeta != null) {
-            pageMeta.setDisplayName(ChatColor.YELLOW + "Page " + (page + 1) + " / " + (maxPage + 1));
-            pageItem.setItemMeta(pageMeta);
-        }
-        inv.setItem(49, pageItem);
-        
-        // Next page (slot 50)
-        if (page < maxPage) {
-            ItemStack next = new ItemStack(Material.ARROW);
-            ItemMeta nextMeta = next.getItemMeta();
-            if (nextMeta != null) {
-                nextMeta.setDisplayName(ChatColor.GOLD + "Next Page »");
-                List<String> lore = new ArrayList<>();
-                lore.add("");
-                lore.add(ChatColor.GRAY + "Go to page " + (page + 2));
-                nextMeta.setLore(lore);
-                next.setItemMeta(nextMeta);
-            }
-            inv.setItem(50, next);
-        }
-        
-        // Slot 53 remains empty (matches level progression layout)
-    }
+    // addNavigation removed — navigation handled by shared navbar managers now
+    
     
     /**
      * Handle click events in the level buy menu
