@@ -1,131 +1,61 @@
-# WDP MODIFY, Created by ai
-not for personal use!
+# AuraSkills (AuraSkills-Coins fork)
 
-<h1 style="text-align:center;">AuraSkills</h1>
+**AI Authorship Notice:** **This fork was produced by an AI due to a time shortage.** Review the code, integration (SkillCoins), and licensing carefully before reuse.
 
-<p style="text-align:center;">
-The ultra-versatile Minecraft RPG skills plugin
-</p>
+---
 
-[![GitHub Release](https://img.shields.io/github/v/release/Archy-X/AuraSkills?style=flat-square)](https://github.com/Archy-X/AuraSkills/releases/latest)
-[![Maven Central Version](https://img.shields.io/maven-central/v/dev.aurelium/auraskills-api-bukkit?style=flat-square&color=%238529F5)](https://central.sonatype.com/artifact/dev.aurelium/auraskills-api-bukkit)
-[![Spiget Downloads](https://img.shields.io/spiget/downloads/81069?style=flat-square)](https://www.spigotmc.org/resources/81069/)
+## 🚀 Overview
 
-<p style="text-align: center;font-weight: bold;">
-  <a href="https://aurelium.dev/auraskills/download">Downloads</a>
-  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="https://wiki.aurelium.dev/auraskills">Wiki</a>
-  &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
-  <a href="https://discord.gg/Bh2EZfB">Discord</a>
-</p>
+AuraSkills is an RPG-style skills and stats plugin for Minecraft servers, providing skills, abilities, menus, loot, and a flexible API for integrations. This repository contains the AuraSkills code modified to include SkillCoins integration (see the `skillcoins` and `bukkit` modules).
 
-## About
+## ✨ Features (summary)
 
-**AuraSkills** (formerly **Aurelium Skills**) is a Minecraft plugin that adds skills, stats, abilities, and other
-RPG-related features. The plugin is fully configurable and customizable, enabling usage on a wide range of server types.
+- Skill progression and XP systems
+- Player stats and attribute modifiers
+- Abilities with mana and activation mechanics
+- Inventory-style skill/ability menus
+- Loot tables and configurable rewards
+- Extensible API for integrations and addons
+- Included `SkillCoins` economy integration module
 
-Features include:
+## ⚙️ Requirements
 
-- **Skills** - Gain skill XP to level skills through general Minecraft tasks, such as Farming or Mining.
-- **Stats** - Get player buffs like increased health and damage by leveling skills, which can be as independent
-  modifiers and on items.
-- **Abilities** - Skills have passive and active abilities that add gameplay mechanics, plus a full mana system.
-- **Menus** - Players can see everything related to skills in fully-configurable inventory GUIs.
-- **Rewards** - Customize rewards given for leveling skills, such as running commands or giving items.
-- **Loot** - Create custom loot tables for fishing, blocks, and mobs.
+- Java 17+ (verify Gradle `toolchain` or `gradle.properties` for exact target)
+- Paper/Spigot 1.20+ / 1.21+ (verify `api-version` in `plugin.yml` for the desired build)
+- Gradle (wrapper included)
 
-See the [official website](https://aurelium.dev/auraskills) and [wiki](https://wiki.aurelium.dev/auraskills) for a more
-complete list of features. The wiki also contains the list
-of [server requirements](https://wiki.aurelium.dev/auraskills/server-requirements) to run the plugin.
+## 🛠 Build & Run
 
-## Building
+Build using the provided Gradle wrapper:
 
-AuraSkills uses Gradle for dependencies and building.
-
-#### Compiling from source
-
-First, clone the project (requires Git to be installed):
-
-```
-git clone https://github.com/Archy-X/AuraSkills.git
-cd AuraSkills/
-```
-
-Then build depending on your operating system:
-
-Linux / macOS
-
-```
+```bash
 ./gradlew clean build
 ```
 
-Windows
+Install the produced JAR(s) into your server's `plugins/` folder.
 
-```
-.\gradlew.bat clean build
-```
+## 🧩 SkillCoins Integration
 
-The output jar can be found in the `build/libs` directory.
+This fork contains the `skillcoins` implementation under `bukkit/src/main/java/dev/aurelium/auraskills/bukkit/skillcoins` (or similar). It adds:
+- Token/coin currency types
+- Shop menu hooks and transaction menus
+- Token exchange UI
 
-## API
+Refer to `SKILLCOINS_README.md` in this repository for specific setup and default shop configs.
 
-AuraSkills has an extensive developer API.
+## ✅ Important Notes
 
-Read the full API documentation on the [wiki](https://wiki.aurelium.dev/auraskills/api), or view
-the [Javadocs](https://docs.aurelium.dev/auraskills-api-bukkit/).
+- This copy was processed by an AI assistant to speed development. Verify all functionality and license compatibility (AuraSkills upstream license and any changes made here) before distributing.
+- Default resource files (e.g., `SkillCoinsShop/*`) are bundled in `bukkit/src/main/resources/` and will be auto-generated into server `plugins/` folder on first run.
 
-Release versions are published to the Maven central repository. Snapshot versions require adding the Sonatype OSS
-repository.
+## 🛠 Contributing & Support
 
-### Maven
+See `CONTRIBUTING.md` and the project `wiki/` for guidelines. If this fork is for internal use, update docs and configs to reflect your deployment choices.
 
-```xml
+## 📄 License
 
-<repository>
-    <id>maven-central-snapshots</id>
-    <url>https://central.sonatype.com/repository/maven-snapshots/</url>
-</repository>
-```
+This project retains the upstream license; verify `LICENSE.md` in this repository for details.
 
-```xml
+---
 
-<dependency>
-    <groupId>dev.aurelium</groupId>
-    <artifactId>auraskills-api-bukkit</artifactId>
-    <version>2.3.5</version>
-    <scope>provided</scope>
-</dependency>
-```
-
-### Gradle
-
-**Groovy DSL:**
-
-```gradle
-repositories {
-    mavenCentral()
-    maven { url 'https://central.sonatype.com/repository/maven-snapshots/' }
-}
-
-dependencies {
-    compileOnly 'dev.aurelium:auraskills-api-bukkit:2.3.5'
-}
-```
-
-**Kotlin DSL:**
-
-```Gradle Kotlin DSL
-repositories { 
-    mavenCentral()
-    maven("https://central.sonatype.com/repository/maven-snapshots/")
-}
-
-dependencies { 
-    compileOnly("dev.aurelium:auraskills-api-bukkit:2.3.5")
-}
-```
-
-## Contributing
-
-We welcome contributions from the community. Please read the [contributing guide](CONTRIBUTING.md) for instructions
-on setting up a development environment and important guidelines you should know before submitting a pull request.
+If you'd like, I can also standardize the `resourcepack/README.md` so the style matches these READMEs.✅
