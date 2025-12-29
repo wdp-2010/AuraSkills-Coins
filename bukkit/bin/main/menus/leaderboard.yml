@@ -5,9 +5,9 @@ fill:
   material: black_stained_glass_pane
 items:
   back:
-    material: arrow
-    pos: 4,4
-    display_name: '<green>{{back}}'
+    material: spyglass
+    pos: 4,8
+    display_name: '§c§l← Back'
     lore:
       - '<gray>{{back_click}}'
 templates:

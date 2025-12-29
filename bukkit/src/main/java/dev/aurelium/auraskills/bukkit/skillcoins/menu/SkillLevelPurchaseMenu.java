@@ -441,7 +441,7 @@ public class SkillLevelPurchaseMenu {
             ItemStack back = new ItemStack(Material.SPYGLASS);
             ItemMeta meta = back.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName(ChatColor.of("#55FF55") + "← Back / Quick Select");
+                meta.setDisplayName("§c§l← Back / Quick Select");
                 List<String> lore = new ArrayList<>();
                 lore.add("");
                 lore.add(ChatColor.of("#808080") + "Left Click: " + ChatColor.of("#FFFFFF") + "Return to skill list");
@@ -455,7 +455,7 @@ public class SkillLevelPurchaseMenu {
             ItemStack close = new ItemStack(Material.SPYGLASS);
             ItemMeta closeMeta = close.getItemMeta();
             if (closeMeta != null) {
-                closeMeta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
+                closeMeta.setDisplayName("§c§l← Back");
                 List<String> lore = new ArrayList<>();
                 lore.add("");
                 lore.add(ChatColor.of("#808080") + "Return to main shop");
@@ -493,7 +493,7 @@ public class SkillLevelPurchaseMenu {
             ItemStack back = new ItemStack(Material.SPYGLASS);
             ItemMeta backMeta = back.getItemMeta();
             if (backMeta != null) {
-                backMeta.setDisplayName(ChatColor.of("#FFFF00") + "← Back");
+                backMeta.setDisplayName("§c§l← Back");
                 List<String> lore = new ArrayList<>();
                 lore.add("");
                 lore.add(ChatColor.of("#808080") + "Return to purchase menu");

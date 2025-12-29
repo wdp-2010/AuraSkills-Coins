@@ -343,7 +343,7 @@ public class SharedNavbarManager {
             Replacer replacer = new Replacer()
                 .map("{page}", () -> String.valueOf(page));
             
-            String materialName = navbarConfig.getString("navbar.previous_page.material", "SPYGLASS");
+            String materialName = navbarConfig.getString("navbar.previous_page.material", "ARROW");
             Material material = Material.valueOf(materialName.toUpperCase());
             
             prev = new ItemStack(material);

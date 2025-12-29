@@ -300,7 +300,7 @@ public class TokenExchangeMenu {
         ItemStack close = new ItemStack(Material.SPYGLASS);
         ItemMeta closeMeta = close.getItemMeta();
         if (closeMeta != null) {
-            closeMeta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
+            closeMeta.setDisplayName("§c§l← Back");
             List<String> lore = new ArrayList<>();
             lore.add("");
             lore.add(ChatColor.of("#808080") + "Return to main shop");
@@ -343,7 +343,7 @@ public class TokenExchangeMenu {
         ItemStack back = new ItemStack(Material.SPYGLASS);
         ItemMeta backMeta = back.getItemMeta();
         if (backMeta != null) {
-            backMeta.setDisplayName(ChatColor.of("#FFFF00") + "← Back");
+            backMeta.setDisplayName("§c§l← Back");
             List<String> backLore = new ArrayList<>();
             backLore.add("");
             backLore.add(ChatColor.of("#808080") + "Return to exchange menu");

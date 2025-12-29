@@ -443,10 +443,10 @@ public class TransactionMenu {
         if (inv == null) return;
         
         try {
-            ItemStack back = new ItemStack(Material.ARROW);
+            ItemStack back = new ItemStack(Material.SPYGLASS);
             ItemMeta meta = back.getItemMeta();
             if (meta != null) {
-                meta.setDisplayName(ChatColor.of("#55FF55") + "← Back");
+                meta.setDisplayName("§c§l← Back");
                 List<String> lore = new ArrayList<>();
                 lore.add("");
                 lore.add(ChatColor.of("#808080") + "Return to shop");

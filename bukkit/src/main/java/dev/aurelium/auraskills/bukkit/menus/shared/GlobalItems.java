@@ -36,7 +36,10 @@ public class GlobalItems {
     public void previousPage(ItemBuilder item) {
         item.onClick(c -> {
             ActiveMenu activeMenu = c.menu();
-            plugin.getSlate().openMenu(c.player(), activeMenu.getName(), activeMenu.getProperties(), activeMenu.getCurrentPage() - 1);
+            int currentPage = activeMenu.getCurrentPage();
+            if (currentPage > 0) {
+                plugin.getSlate().openMenu(c.player(), activeMenu.getName(), activeMenu.getProperties(), currentPage - 1);
+            }
         });
         // Show a glass pane when previous page is not available to preserve layout
         item.modify(i -> {
@@ -56,7 +59,11 @@ public class GlobalItems {
     public void nextPage(ItemBuilder item) {
         item.onClick(c -> {
             ActiveMenu activeMenu = c.menu();
-            plugin.getSlate().openMenu(c.player(), activeMenu.getName(), activeMenu.getProperties(), activeMenu.getCurrentPage() + 1);
+            int currentPage = activeMenu.getCurrentPage();
+            int totalPages = activeMenu.getTotalPages();
+            if (currentPage < totalPages - 1) {
+                plugin.getSlate().openMenu(c.player(), activeMenu.getName(), activeMenu.getProperties(), currentPage + 1);
+            }
         });
         // Show a glass pane when next page is not available to preserve layout
         item.modify(i -> {

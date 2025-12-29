@@ -238,13 +238,13 @@ public class LevelBuyMenu {
                     String displayName;
                     List<String> lore = new ArrayList<>();
                         if (currentOrigin == MenuManager.MenuOrigin.SKILL_SELECT) {
-                        displayName = "§e§l← Back";
+                        displayName = "§c§l← Back";
                     } else if (currentOrigin == MenuManager.MenuOrigin.SKILL_ROAD) {
-                        displayName = "§e§l← Back to road";
+                        displayName = "§c§l← Back§7 to road";
                         lore.add(" ");
                         lore.add("§7Return to Skill Road");
                     } else {
-                        displayName = "§e§l← Back";
+                        displayName = "§c§l← Back";
                     }
                     backMeta.setDisplayName(displayName);
                     backMeta.setLore(lore);

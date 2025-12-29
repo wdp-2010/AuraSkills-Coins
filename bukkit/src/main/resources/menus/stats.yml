@@ -11,9 +11,9 @@ items:
     lore:
       - '{entries[\n]}'
   back:
-    material: arrow
-    pos: 3,0
-    display_name: '<green>{{back}}'
+    material: spyglass
+    pos: 3,8
+    display_name: '§c§l← Back'
     lore:
       - '<gray>{{back_click}}'
 templates:

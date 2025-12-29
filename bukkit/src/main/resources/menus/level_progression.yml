@@ -81,21 +81,21 @@ items:
     display_name: ' '
   previous_page:
     pos: 5,3
-    material: spyglass
-    display_name: '<gold>{{previous_page}}'
+    material: arrow
+    display_name: '§e§l← Previous'
     lore:
     - '<yellow>{{previous_page_click}}'
   page_info:
     pos: 5,4
     material: paper
-    display_name: '<gray>{{page_text}}: <white>{page} <gray>/ {total_pages}'
+    display_name: '<gray>{{page_text}}: <white>{page}<dark_gray> /{total_pages}'
     lore:
     - ''
     - '§8Viewing level {start}-{end}'
   next_page:
     pos: 5,5
     material: arrow
-    display_name: '<gold>{{next_page}}'
+    display_name: '§e§lNext →'
     lore:
     - '<yellow>{{next_page_click}}'
   glass_right_1:
@@ -108,8 +108,8 @@ items:
     display_name: ' '
   back_close:
     pos: 5,8
-    material: arrow
-    display_name: '<green>{{back}}'
+    material: spyglass
+    display_name: '§c§l← Back'
     lore:
     - '<gray>{{back_click}}' 
 templates:
