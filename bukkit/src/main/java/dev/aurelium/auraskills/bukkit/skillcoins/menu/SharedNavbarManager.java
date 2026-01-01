@@ -268,7 +268,17 @@ public class SharedNavbarManager {
         // New unified format: glass_fill with slots array
         if (navbarConfig.contains("navbar.glass_fill")) {
             String materialName = navbarConfig.getString("navbar.glass_fill.material", "BLACK_STAINED_GLASS_PANE");
-            Material material = Material.valueOf(materialName.toUpperCase());
+            Material material;
+            try {
+                material = Material.valueOf(materialName.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                AuraSkills.getPlugin().getLogger().log(
+                        Level.WARNING,
+                        "Invalid material '" + materialName + "' for navbar glass_fill. Using BLACK_STAINED_GLASS_PANE instead.",
+                        ex
+                );
+                material = Material.BLACK_STAINED_GLASS_PANE;
+            }
             String displayName = navbarConfig.getString("navbar.glass_fill.display_name", " ");
 
             ItemStack glass = new ItemStack(material);
@@ -489,8 +499,24 @@ public class SharedNavbarManager {
         Replacer replacer = new Replacer()
             .map("{menu_name}", () -> "Main Menu"); // Default fallback
         
-        String materialName = navbarConfig.getString(configKey + ".material", hasPreviousMenu ? "SPYGLASS" : "BARRIER");
-        Material material = Material.valueOf(materialName.toUpperCase());
+        Material defaultMaterial = hasPreviousMenu ? Material.SPYGLASS : Material.BARRIER;
+        String materialName = navbarConfig.getString(configKey + ".material");
+        Material material;
+        if (materialName == null || materialName.trim().isEmpty()) {
+            material = defaultMaterial;
+        } else {
+            try {
+                material = Material.valueOf(materialName.toUpperCase());
+            } catch (IllegalArgumentException ex) {
+                AuraSkills.getPlugin().getLogger().log(
+                        Level.WARNING,
+                        "Invalid material '" + materialName + "' for navbar key '" + configKey + "'. " +
+                        "Using default material '" + defaultMaterial + "' instead.",
+                        ex
+                );
+                material = defaultMaterial;
+            }
+        }
         
         ItemStack button = new ItemStack(material);
         ItemMeta meta = button.getItemMeta();
