@@ -181,16 +181,18 @@ public class ShopMainMenu {
             if (meta instanceof SkullMeta) {
                 SkullMeta skullMeta = (SkullMeta) meta;
                 skullMeta.setOwningPlayer(player);
-                skullMeta.setDisplayName(ChatColor.AQUA + "⛃ Shop " + 
+                skullMeta.setDisplayName(ChatColor.AQUA +  "Shop " + 
                         ChatColor.GOLD + "♦ " + player.getName());
                 
                 List<String> lore = new ArrayList<>();
                 lore.add("");
-                lore.add(ChatColor.GRAY + "Welcome to the ⛃ Shop!");
-                lore.add(ChatColor.GRAY + "Browse categories below to buy");
-                lore.add(ChatColor.GRAY + "and sell items using your earnings.");
+                lore.add(ChatColor.GRAY + "Welcome to the Shop!");
                 lore.add("");
-                lore.add(ChatColor.AQUA + "▸ Your balance is on the right →");
+                lore.add(ChatColor.YELLOW + "▸ " + ChatColor.WHITE + "Buy & sell items");
+                lore.add(ChatColor.YELLOW + "▸ " + ChatColor.WHITE + "Upgrade your skills");
+                lore.add(ChatColor.YELLOW + "▸ " + ChatColor.WHITE + "Exchange coins for tokens");
+                lore.add("");
+                lore.add(ChatColor.GRAY + "Check your balance on the right →");
                 
                 skullMeta.setLore(lore);
                 playerHead.setItemMeta(skullMeta);
@@ -216,9 +218,9 @@ public class ShopMainMenu {
                 
                 List<String> lore = new ArrayList<>();
                 lore.add("");
-                lore.add(ChatColor.YELLOW + "⛃: " + 
+                lore.add(ChatColor.YELLOW + "SkillCoins: " + 
                         ChatColor.WHITE + MONEY_FORMAT.format(coins) + " ⛃");
-                lore.add(ChatColor.AQUA + "🎟: " + 
+                lore.add(ChatColor.AQUA + "Tokens: " + 
                         ChatColor.WHITE + MONEY_FORMAT.format(tokens) + " 🎟");
                 lore.add("");
                 lore.add(ChatColor.GRAY + "Earn more by leveling skills");

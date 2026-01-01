@@ -1,4 +1,4 @@
 enable: true
 slot: 24
-material: REDSTONE
-displayname: 'Redstone'
+material: REDSTONE_BLOCK
+displayname: '&c⚡ Redstone'
