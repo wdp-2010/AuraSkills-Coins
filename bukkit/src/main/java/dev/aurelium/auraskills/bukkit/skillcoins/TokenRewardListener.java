@@ -133,8 +133,8 @@ public class TokenRewardListener implements Listener {
             // End game: 220, 250, 280 (total 750 for 80-90)
             return 190 + ((level - 75) / 5) * 30; // 220, 250, 280
         } else {
-            // Master tier: 320, 400 (total 720 for 95-100)
-            return 280 + ((level - 90) / 5) * 40; // 320 at 95, 400 at 100
+            // Master tier: 320, 360 (total 680 for 95-100)
+            return 280 + ((level - 90) / 5) * 40; // 320 at 95, 360 at 100
         }
     }
     
