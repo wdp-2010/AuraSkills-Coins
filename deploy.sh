@@ -373,18 +373,4 @@ echo "  • Server: ${LOG_FILE}"
 echo "  • Container: docker logs ${CONTAINER_NAME}"
 echo ""
 
-# Ask to follow logs
-read -p "Follow server logs? (y/n) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]; then
-    if [[ -f "$LOG_FILE" ]]; then
-        log_info "Following logs (Ctrl+C to exit)..."
-        sleep 1
-        tail -f "$LOG_FILE" | grep --color=auto -E "AuraSkills|ERROR|WARN|Done"
-    else
-        log_warning "Log file not available yet"
-        log_info "Container logs: docker logs ${CONTAINER_NAME}"
-    fi
-fi
-
 exit 0

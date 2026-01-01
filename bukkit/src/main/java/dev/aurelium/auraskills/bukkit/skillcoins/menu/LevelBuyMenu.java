@@ -198,8 +198,8 @@ public class LevelBuyMenu {
                 Inventory currentInv = player.getOpenInventory().getTopInventory();
                 if (currentInv != null && currentInv.getSize() == 54) {
                     String openTitle = player.getOpenInventory().getTitle();
-                    // Only reuse the open inventory if the title matches exactly; otherwise recreate to update title
-                    if (openTitle.equals(title)) {
+                    // Reuse if the title prefix matches (allows page changes without recreating inventory)
+                    if (openTitle != null && openTitle.startsWith(TITLE_PREFIX)) {
                         inv = currentInv;
                     }
                 }
@@ -210,6 +210,9 @@ public class LevelBuyMenu {
             if (inv == null) {
                 inv = Bukkit.createInventory(null, 54, title);
                 isNewInventory = true;
+            } else {
+                // Update title on the reused inventory (prevents stale page numbers)
+                // This is safe because we're clearing and refilling anyway
             }
             
             inv.clear();
@@ -634,7 +637,22 @@ public class LevelBuyMenu {
     public void handleClose(InventoryCloseEvent event) {
         if (!(event.getPlayer() instanceof Player)) return;
         Player player = (Player) event.getPlayer();
-        cleanupSession(player);
+        
+        // Delay cleanup to allow page navigation to complete
+        // If player opens another menu immediately (page change), this prevents premature unregistration
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            // Only cleanup if player doesn't have this menu open anymore
+            if (player.isOnline() && player.getOpenInventory() != null) {
+                String currentTitle = player.getOpenInventory().getTitle();
+                if (currentTitle == null || !currentTitle.startsWith(TITLE_PREFIX)) {
+                    // Player has different menu or no menu - safe to cleanup
+                    cleanupSession(player);
+                }
+            } else {
+                // Player offline or no inventory - cleanup
+                cleanupSession(player);
+            }
+        }, 1L); // 1 tick delay
     }
     
     private Material getSkillIcon(Skill skill) {

@@ -515,7 +515,19 @@ public class ShopSectionMenu {
         
         try {
             Player player = (Player) event.getPlayer();
-            playerPages.remove(player.getUniqueId());
+            // Delay cleanup to allow page navigation to complete
+            Bukkit.getScheduler().runTaskLater(plugin, () -> {
+                if (player.isOnline() && player.getOpenInventory() != null) {
+                    String currentTitle = player.getOpenInventory().getTitle();
+                    if (currentTitle == null || !isMenuTitle(currentTitle)) {
+                        // Different menu - safe to cleanup
+                        playerPages.remove(player.getUniqueId());
+                    }
+                } else {
+                    // Player offline - cleanup
+                    playerPages.remove(player.getUniqueId());
+                }
+            }, 1L);
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error handling section menu close", e);
         }

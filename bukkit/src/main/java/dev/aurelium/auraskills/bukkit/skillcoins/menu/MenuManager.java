@@ -369,7 +369,8 @@ public class MenuManager implements Listener {
             LevelBuyMenu menu = levelBuyMenus.get(playerId);
             if (menu != null && menu.isMenuTitle(title)) {
                 menu.handleClose(event);
-                levelBuyMenus.remove(playerId);
+                // Don't remove here - let the menu's delayed cleanup handle it
+                // This prevents race conditions during page navigation
             }
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error closing level buy menu", e);
@@ -425,7 +426,8 @@ public class MenuManager implements Listener {
             ShopSectionMenu menu = sectionMenus.get(playerId);
             if (menu != null && menu.isMenuTitle(title)) {
                 menu.handleClose(event);
-                sectionMenus.remove(playerId);
+                // Don't remove here - let the menu's delayed cleanup handle it
+                // This prevents race conditions during page navigation
             }
         } catch (Exception e) {
             plugin.getLogger().log(Level.WARNING, "Error closing section menu", e);
