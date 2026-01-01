@@ -18,10 +18,10 @@ import org.bukkit.event.Listener;
  * - Scaling rewards encourage continued progression without being overwhelming
  * 
  * Expected total per skill (100 levels):
- * - Coins: ~3,800 coins (from 20 payouts at levels 5,10,15...100)
- * - Tokens: ~30 tokens (from 10 payouts at levels 10,20,30...100)
+ * - Coins: 2,670 coins (from 20 payouts at levels 5,10,15...100)
+ * - Tokens: 32 tokens (from 10 payouts at levels 10,20,30...100)
  * 
- * With 11 skills, a maxed player earns: ~41,800 coins, ~330 tokens
+ * With 11 skills, a maxed player earns: ~29,370 coins, ~352 tokens
  * This ensures long-term goals while keeping early game accessible
  */
 public class TokenRewardListener implements Listener {
@@ -102,13 +102,13 @@ public class TokenRewardListener implements Listener {
      * ONLY given every 5 levels
      * 
      * Coin rewards by level tier:
-     * - Levels 5-10: 15-25 coins (early game ~40 total)
-     * - Levels 15-25: 30-50 coins (~120 total)
-     * - Levels 30-50: 60-120 coins (~450 total)
-     * - Levels 55-75: 130-200 coins (~830 total)
-     * - Levels 80-90: 220-280 coins (~750 total)
-     * - Levels 95-100: 320-400 coins (~720 total)
-     * Total per skill: ~2,910 coins
+     * - Levels 5-10: 15, 20 coins (35 total)
+     * - Levels 15-25: 30, 35, 40 coins (105 total)
+     * - Levels 30-50: 50, 60, 70, 80, 90 coins (350 total)
+     * - Levels 55-75: 110, 130, 150, 170, 190 coins (750 total)
+     * - Levels 80-90: 220, 250, 280 coins (750 total)
+     * - Levels 95-100: 320, 360 coins (680 total)
+     * Total per skill: 2,670 coins
      */
     private int calculateCoinsReward(int level) {
         // Only give coins on multiples of 5
