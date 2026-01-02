@@ -272,7 +272,7 @@ public class SharedNavbarManager {
             try {
                 material = Material.valueOf(materialName.toUpperCase());
             } catch (IllegalArgumentException ex) {
-                AuraSkills.getPlugin().getLogger().log(
+                AuraSkills.getPlugin(AuraSkills.class).getLogger().log(
                         Level.WARNING,
                         "Invalid material '" + materialName + "' for navbar glass_fill. Using BLACK_STAINED_GLASS_PANE instead.",
                         ex
@@ -508,7 +508,7 @@ public class SharedNavbarManager {
             try {
                 material = Material.valueOf(materialName.toUpperCase());
             } catch (IllegalArgumentException ex) {
-                AuraSkills.getPlugin().getLogger().log(
+                AuraSkills.getPlugin(AuraSkills.class).getLogger().log(
                         Level.WARNING,
                         "Invalid material '" + materialName + "' for navbar key '" + configKey + "'. " +
                         "Using default material '" + defaultMaterial + "' instead.",

@@ -65,4 +65,44 @@ public class SkillCoinsEconomy implements EconomyProvider {
             save(uuid);
         }
     }
+    
+    // ===================== THREAD-SAFE OVERRIDE METHODS =====================
+    
+    /**
+     * Thread-safe add balance operation
+     * Overrides default implementation to prevent race conditions
+     */
+    @Override
+    public synchronized double addBalance(UUID uuid, CurrencyType type, double amount) {
+        double currentBalance = getBalance(uuid, type);
+        double newBalance = currentBalance + amount;
+        setBalance(uuid, type, newBalance);
+        return newBalance;
+    }
+    
+    /**
+     * Thread-safe subtract balance operation
+     * Overrides default implementation to prevent race conditions
+     * CRITICAL: This prevents the economy duplication exploit
+     */
+    @Override
+    public synchronized double subtractBalance(UUID uuid, CurrencyType type, double amount) {
+        double currentBalance = getBalance(uuid, type);
+        if (currentBalance < amount) {
+            // Insufficient funds - don't allow negative balance
+            return currentBalance;
+        }
+        double newBalance = currentBalance - amount;
+        setBalance(uuid, type, newBalance);
+        return newBalance;
+    }
+    
+    /**
+     * Thread-safe balance check
+     * Returns false immediately if insufficient funds
+     */
+    @Override
+    public synchronized boolean hasBalance(UUID uuid, CurrencyType type, double amount) {
+        return getBalance(uuid, type) >= amount;
+    }
 }
