@@ -211,8 +211,8 @@ public class LevelBuyMenu {
                 inv = Bukkit.createInventory(null, 54, title);
                 isNewInventory = true;
             } else {
-                // Update title on the reused inventory (prevents stale page numbers)
-                // This is safe because we're clearing and refilling anyway
+                // Reuse the existing inventory; titles are immutable in Bukkit so we cannot update it here
+                // This is safe because we're clearing and refilling the contents anyway
             }
             
             inv.clear();
