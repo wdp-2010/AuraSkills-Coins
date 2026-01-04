@@ -1,4 +1,14 @@
-enable: true
-slot: 11
-material: NETHERITE_PICKAXE
-displayname: '&b⛏ Tools'
+enable: false
+slot: 13
+title: ''
+hidden: false
+sub-section: false
+display-item: false
+fill-item:
+  material: AIR
+nav-bar:
+  mode: INHERIT
+item:
+  material: NETHERITE_PICKAXE
+  displayname: '&b⛏ Tools'
+  name: '&b⛏ Tools'

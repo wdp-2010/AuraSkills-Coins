@@ -86,18 +86,36 @@ public class ShopLoader {
         }
         
         String id = file.getName().replace(".yml", "");
-        int slot = config.getInt("slot", 0);
+        int slot = config.getInt("slot", 0) - 1;  // Offset by -1 to fix alignment
         
-        String materialName = config.getString("material", "STONE");
+        // Parse icon material - supports both direct "material" and "item.material" (EconomyShopGUI style)
+        String materialName = config.getString("item.material", config.getString("material", "STONE"));
         Material icon = Material.getMaterial(materialName);
         if (icon == null) {
             plugin.getLogger().warning("Invalid material " + materialName + " for section " + id);
             icon = Material.STONE;
         }
         
-        String displayName = config.getString("displayname", id);
+        // Parse displayname - supports both direct "displayname" and "item.displayname"
+        String displayName = config.getString("item.displayname", config.getString("displayname", id));
         
-        return new ShopSection(id, displayName, icon, slot);
+        // Parse EconomyShopGUI-style options
+        String title = config.getString("title", "");
+        boolean hidden = config.getBoolean("hidden", false);
+        boolean subSection = config.getBoolean("sub-section", false);
+        boolean displayItem = config.getBoolean("display-item", false);
+        
+        // Parse fill-item material
+        String fillMaterialName = config.getString("fill-item.material", "AIR");
+        Material fillItem = Material.getMaterial(fillMaterialName);
+        if (fillItem == null) {
+            fillItem = Material.AIR;
+        }
+        
+        // Parse nav-bar mode
+        String navBarMode = config.getString("nav-bar.mode", "INHERIT");
+        
+        return new ShopSection(id, displayName, icon, slot, title, hidden, subSection, displayItem, fillItem, navBarMode);
     }
     
     private void loadItemsForSection(ShopSection section) {
@@ -212,12 +230,17 @@ public class ShopLoader {
      * Copy default shop configuration files from plugin resources
      */
     private void copyDefaultConfigs() {
+        // All sections: custom + EconomyShopGUI
         String[] sectionFiles = {"Combat.yml", "Enchantments.yml", "Resources.yml", "Tools.yml", 
                                  "Food.yml", "Blocks.yml", "Farming.yml", "Potions.yml", "Redstone.yml", "Miscellaneous.yml",
-                                 "SkillLevels.yml", "TokenExchange.yml", "Tokens.yml"};
+                                 "SkillLevels.yml", "TokenExchange.yml", "Tokens.yml",
+                                 "Decoration.yml", "Dyes.yml", "Enchanting.yml", "Mobs.yml", "Music.yml", "Ores.yml",
+                                 "SpawnEggs.yml", "Spawners.yml", "Workstations.yml", "Z_EverythingElse.yml"};
         String[] shopFiles = {"Combat.yml", "Enchantments.yml", "Resources.yml", "Tools.yml",
                              "Food.yml", "Blocks.yml", "Farming.yml", "Potions.yml", "Redstone.yml", "Miscellaneous.yml",
-                             "SkillLevels.yml", "TokenExchange.yml", "Tokens.yml"};
+                             "SkillLevels.yml", "TokenExchange.yml", "Tokens.yml",
+                             "Decoration.yml", "Dyes.yml", "Enchanting.yml", "Mobs.yml", "Music.yml", "Ores.yml",
+                             "SpawnEggs.yml", "Spawners.yml", "Workstations.yml", "Z_EverythingElse.yml"};
         
         plugin.getLogger().info("Creating default SkillCoins shop configuration files...");
         

@@ -37,9 +37,6 @@ navbar:
     display_name: '§e§lPage §f§l{page} §8/ §f§l{total_pages}'
     lore:
       - ''
-      - '§7Current page: §f{page}'
-      - '§7Total pages: §f{total_pages}'
-      - ''
 
   # Slot 50: Next page (only shown when page < total_pages)
   next_page:

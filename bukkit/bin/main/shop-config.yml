@@ -1,0 +1,170 @@
+# ╔══════════════════════════════════════════════════════════════════════════════╗
+# ║                    SKILLCOINS SHOP CONFIGURATION                              ║
+# ╚══════════════════════════════════════════════════════════════════════════════╝
+
+# Configuration version - DO NOT EDIT
+config-version: 1
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SKILL LEVEL PRICING
+# ═══════════════════════════════════════════════════════════════════════════════
+skill-levels:
+  # Exponential pricing formula: base * (multiplier ^ level)
+  # Example: Level 1 = 100 * (1.15 ^ 1) = 115 tokens
+  #          Level 2 = 100 * (1.15 ^ 2) = 132 tokens
+  #          Level 10 = 100 * (1.15 ^ 10) = 405 tokens
+  #          Level 50 = 100 * (1.15 ^ 50) = 108,366 tokens
+  
+  # Base price for level 1
+  base-price: 100
+  
+  # Exponential multiplier (1.15 = 15% increase per level)
+  # Lower values (1.10) = slower growth, easier progression
+  # Higher values (1.20) = faster growth, harder progression
+  multiplier: 1.15
+  
+  # Maximum level that can be purchased
+  max-level: 50
+  
+  # Price calculation mode
+  # CUMULATIVE: Pay for all levels (level 1 + level 2 + level 3...)
+  # INDIVIDUAL: Pay only for the next level
+  mode: INDIVIDUAL
+  
+  # Allow purchasing when player already has natural levels from grinding
+  # true: Can buy level 10 even if you're already level 8 from playing
+  # false: Can only buy if you haven't reached that level naturally
+  allow-above-current: true
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# TOKEN EXCHANGE
+# ═══════════════════════════════════════════════════════════════════════════════
+token-exchange:
+  # Exchange rate: coins per token
+  # Example: 1000 = costs 1000 coins to buy 1 token
+  coins-per-token: 1000
+  
+  # Minimum purchase amount
+  min-tokens: 1
+  
+  # Maximum purchase amount per transaction
+  max-tokens-per-transaction: 1000
+  
+  # Daily purchase limit (0 = unlimited)
+  daily-limit: 0
+  
+  # Preset quick-buy amounts
+  quick-amounts:
+    - 1
+    - 10
+    - 50
+    - 100
+    - 500
+    - 1000
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ITEM SHOP PRICING
+# ═══════════════════════════════════════════════════════════════════════════════
+items:
+  # Sell price calculation
+  # Percentage of buy price when selling items back
+  # 0.30 = 30% of buy price returned when selling
+  sell-price-percentage: 0.30
+  
+  # Bulk purchase discount
+  # When buying stacks, apply discount
+  bulk-discount:
+    enabled: true
+    # 16+ items = 5% discount
+    threshold-16: 0.05
+    # 32+ items = 10% discount
+    threshold-32: 0.10
+    # 64 items = 15% discount
+    threshold-64: 0.15
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# SHOP INTERFACE
+# ═══════════════════════════════════════════════════════════════════════════════
+interface:
+  # Shop menu size (must be multiple of 9, between 9 and 54)
+  menu-size: 54
+  
+  # Section menu size
+  section-menu-size: 54
+  
+  # Items per page in section menus
+  items-per-page: 28
+  
+  # Show purchase confirmations
+  confirm-purchases: false
+  
+  # Play sound on purchase
+  purchase-sound:
+    enabled: true
+    sound: ENTITY_PLAYER_LEVELUP
+    volume: 1.0
+    pitch: 1.5
+  
+  # Play sound on sale
+  sell-sound:
+    enabled: true
+    sound: ENTITY_EXPERIENCE_ORB_PICKUP
+    volume: 1.0
+    pitch: 1.2
+  
+  # Play sound on error
+    error-sound:
+    enabled: true
+    sound: ENTITY_VILLAGER_NO
+    volume: 1.0
+    pitch: 1.0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ECONOMY INTEGRATION
+# ═══════════════════════════════════════════════════════════════════════════════
+economy:
+  # Use Vault economy for transactions (if available)
+  use-vault: false
+  
+  # Currency names
+  currency:
+    coins:
+      singular: "SkillCoin"
+      plural: "SkillCoins"
+      symbol: "⛃"
+    tokens:
+      singular: "Token"
+      plural: "Tokens"
+      symbol: "🎟"
+  
+  # Starting balance for new players
+  starting-balance:
+    coins: 0
+    tokens: 0
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# ANTI-EXPLOIT
+# ═══════════════════════════════════════════════════════════════════════════════
+anti-exploit:
+  # Prevent buy -> sell loops for profit
+  # Tracks recently purchased items to prevent immediate resale
+  track-purchases: true
+  
+  # Time in seconds before purchased items can be sold
+  resale-cooldown: 300
+  
+  # Maximum transactions per minute (0 = unlimited)
+  transaction-limit: 50
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# DEBUG
+# ═══════════════════════════════════════════════════════════════════════════════
+debug:
+  # Enable debug logging
+  enabled: false
+  
+  # Log all transactions
+  log-transactions: false
+  
+  # Log price calculations
+  log-pricing: false

@@ -148,12 +148,13 @@ public class ShopMainMenu {
     
     /**
      * Fill inventory with border safely
+     * Uses gray glass pane to match EconomyShopGUI style
      */
     private void fillBorder(Inventory inv) {
         if (inv == null) return;
         
         try {
-            ItemStack border = new ItemStack(Material.BLACK_STAINED_GLASS_PANE);
+            ItemStack border = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
             ItemMeta borderMeta = border.getItemMeta();
             if (borderMeta != null) {
                 borderMeta.setDisplayName(" ");
