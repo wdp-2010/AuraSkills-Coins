@@ -107,4 +107,60 @@ public class ShopSection {
     public String getNavBarMode() {
         return navBarMode;
     }
+    
+    /**
+     * Get the display color based on section type
+     */
+    public String getDisplayColor() {
+        String lower = (displayName != null ? displayName.toLowerCase() : id.toLowerCase());
+        
+        if (lower.contains("combat")) return "#FF5555";
+        if (lower.contains("enchant")) return "#FF55FF";
+        if (lower.contains("resource")) return "#55FF55";
+        if (lower.contains("tool")) return "#5555FF";
+        if (lower.contains("food")) return "#FFFF00";
+        if (lower.contains("block")) return "#FFD700";
+        if (lower.contains("farm")) return "#55FF55";
+        if (lower.contains("potion")) return "#FF55FF";
+        if (lower.contains("redstone")) return "#FF5555";
+        if (lower.contains("skill") || lower.contains("level")) return "#FFD700";
+        if (lower.contains("token") || lower.contains("exchange")) return "#00FFFF";
+        if (lower.contains("misc")) return "#808080";
+        if (lower.contains("decoration")) return "#FF69B4";
+        if (lower.contains("dye")) return "#DA70D6";
+        if (lower.contains("music")) return "#9370DB";
+        if (lower.contains("ore")) return "#CD853F";
+        if (lower.contains("spawn")) return "#90EE90";
+        if (lower.contains("workstation")) return "#DEB887";
+        
+        return "#00FFFF"; // Default cyan
+    }
+    
+    /**
+     * Get an icon character for the section
+     */
+    public String getIconChar() {
+        String lower = (displayName != null ? displayName.toLowerCase() : id.toLowerCase());
+        
+        if (lower.contains("combat")) return "⚔ ";
+        if (lower.contains("enchant")) return "✦ ";
+        if (lower.contains("resource")) return "❖ ";
+        if (lower.contains("tool")) return "⚒ ";
+        if (lower.contains("food")) return "🍖 ";
+        if (lower.contains("block")) return "⬛ ";
+        if (lower.contains("farm")) return "🌾 ";
+        if (lower.contains("potion")) return "⚗ ";
+        if (lower.contains("redstone")) return "🔴 ";
+        if (lower.contains("skill") || lower.contains("level")) return "★ ";
+        if (lower.contains("token") || lower.contains("exchange")) return "🎟 ";
+        if (lower.contains("misc")) return "⋯ ";
+        if (lower.contains("decoration")) return "✿ ";
+        if (lower.contains("dye")) return "🎨 ";
+        if (lower.contains("music")) return "♫ ";
+        if (lower.contains("ore")) return "⛏ ";
+        if (lower.contains("spawn")) return "🥚 ";
+        if (lower.contains("workstation")) return "🔨 ";
+        
+        return "● "; // Default bullet
+    }
 }

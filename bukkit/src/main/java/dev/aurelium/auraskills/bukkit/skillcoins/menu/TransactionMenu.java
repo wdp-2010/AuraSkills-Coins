@@ -85,7 +85,7 @@ public class TransactionMenu {
         }
         
         this.menuTitle = (isBuying ? ChatColor.of("#55FF55") + "Buy: " : ChatColor.of("#FFD700") + "Sell: ") + 
-                ChatColor.of("#FFFFFF") + itemName;
+                ChatColor.of("#808080") + itemName;
     }
     
     /**

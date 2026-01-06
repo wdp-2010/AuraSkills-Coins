@@ -36,8 +36,14 @@ public class LevelBuyMenu {
     // The track positions (same as level_progression.yml)
     private static final int[] TRACK = {9, 18, 27, 36, 37, 38, 29, 20, 11, 12, 13, 22, 31, 40, 41, 42, 33, 24, 15, 16, 17, 26, 35, 44};
     private static final int ITEMS_PER_PAGE = 24;
-    private static final int TOKENS_PER_LEVEL = 10;
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0");
+    
+    // Exponential pricing system - balanced around shop economy
+    // Base: 500 coins (5 tokens) for first level
+    // Formula: cost = 500 * (1.08 ^ (level - 1))
+    // This scales from 500 coins at level 1 to ~46,000 coins at level 50
+    private static final double BASE_PRICE = 500.0; // 500 coins = 5 tokens
+    private static final double GROWTH_RATE = 1.08; // 8% growth per level
     
     // Title prefix to identify this menu
     private static final String TITLE_PREFIX = ChatColor.DARK_GRAY + "Buy ";
@@ -273,7 +279,7 @@ public class LevelBuyMenu {
         double tokenBalance = economy.getBalance(uuid, CurrencyType.TOKENS);
         
         int levelsToBuy = selectedLevel - currentLevel;
-        int totalCost = levelsToBuy * TOKENS_PER_LEVEL;
+        double totalCost = calculateTotalCost(currentLevel, selectedLevel);
         boolean canAfford = tokenBalance >= totalCost;
         
         // Slot 0: Skill Info
@@ -310,7 +316,9 @@ public class LevelBuyMenu {
                         ChatColor.GREEN + selectedLevel);
                 lore.add(ChatColor.GRAY + "Buying: " + ChatColor.YELLOW + levelsToBuy + " level" + (levelsToBuy > 1 ? "s" : ""));
                 lore.add("");
-                lore.add(ChatColor.GOLD + "Cost: " + ChatColor.WHITE + MONEY_FORMAT.format(totalCost) + " Tokens");
+                lore.add(ChatColor.GOLD + "Total Cost: " + ChatColor.WHITE + MONEY_FORMAT.format(totalCost) + " Tokens");
+                lore.add(ChatColor.GRAY + "Average per level: " + ChatColor.WHITE + 
+                        MONEY_FORMAT.format(totalCost / levelsToBuy) + " Tokens");
                 lore.add(ChatColor.GRAY + "Balance after: " + ChatColor.WHITE + 
                         MONEY_FORMAT.format(tokenBalance - totalCost));
                 lore.add("");
@@ -389,18 +397,22 @@ public class LevelBuyMenu {
                 // Selected for purchase - cyan/light blue glass (highlighted)
                 material = Material.LIGHT_BLUE_STAINED_GLASS_PANE;
                 displayName = ChatColor.of("#00FFFF") + "Level " + level + " ★";
+                double levelCost = calculateLevelCost(level);
                 lore.add("");
                 lore.add(ChatColor.AQUA + "SELECTED FOR PURCHASE");
+                lore.add("");
+                lore.add(ChatColor.GOLD + "Cost: " + ChatColor.WHITE + MONEY_FORMAT.format(levelCost) + " Tokens");
                 lore.add("");
                 lore.add(ChatColor.YELLOW + "▸ Click to deselect this level");
             } else {
                 // Not selected, can be purchased - red/orange glass
                 material = Material.RED_STAINED_GLASS_PANE;
                 displayName = ChatColor.RED + "Level " + level;
+                double levelCost = calculateLevelCost(level);
                 lore.add("");
                 lore.add(ChatColor.GRAY + "Locked");
                 lore.add("");
-                lore.add(ChatColor.GOLD + "Cost: " + ChatColor.WHITE + TOKENS_PER_LEVEL + " Tokens");
+                lore.add(ChatColor.GOLD + "Cost: " + ChatColor.WHITE + MONEY_FORMAT.format(levelCost) + " Tokens");
                 lore.add("");
                 lore.add(ChatColor.YELLOW + "▸ Click to select up to this level");
             }
@@ -578,7 +590,7 @@ public class LevelBuyMenu {
         UUID uuid = player.getUniqueId();
         
         int levelsToBuy = selectedLevel - currentLevel;
-        int totalCost = levelsToBuy * TOKENS_PER_LEVEL;
+        double totalCost = calculateTotalCost(currentLevel, selectedLevel);
         
         double balance = economy.getBalance(uuid, CurrencyType.TOKENS);
         
@@ -598,6 +610,16 @@ public class LevelBuyMenu {
         user.setSkillLevel(skill, selectedLevel);
         
         // Success feedback
+        player.sendMessage(ChatColor.of("#55FF55") + "✔ Successfully purchased " + levelsToBuy + 
+                " level" + (levelsToBuy > 1 ? "s" : "") + " for " + 
+                ChatColor.of("#FFFF00") + MONEY_FORMAT.format(totalCost) + " tokens!");
+        player.sendMessage(ChatColor.GRAY + "New " + skill.getDisplayName(user.getLocale()) + " level: " + 
+                ChatColor.of("#00FFFF") + selectedLevel);
+        player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
+        
+        // Close menu and cleanup
+        cleanupSession(player);
+        player.closeInventory();
         player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1.0f, 1.0f);
         player.playSound(player.getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 0.5f, 1.0f);
         
@@ -653,6 +675,27 @@ public class LevelBuyMenu {
                 cleanupSession(player);
             }
         }, 1L); // 1 tick delay
+    }
+    
+    /**
+     * Calculate the cost of a single level using exponential formula
+     * Formula: BASE_PRICE * (GROWTH_RATE ^ (level - 1))
+     * Example: Level 1 = 500, Level 2 = 540, Level 10 = 1,000, Level 50 = 46,902
+     */
+    private double calculateLevelCost(int level) {
+        return BASE_PRICE * Math.pow(GROWTH_RATE, level - 1);
+    }
+    
+    /**
+     * Calculate total cost for purchasing multiple levels (from startLevel+1 to endLevel)
+     * This sums the individual exponential costs for each level
+     */
+    private double calculateTotalCost(int startLevel, int endLevel) {
+        double total = 0.0;
+        for (int i = startLevel + 1; i <= endLevel; i++) {
+            total += calculateLevelCost(i);
+        }
+        return total;
     }
     
     private Material getSkillIcon(Skill skill) {

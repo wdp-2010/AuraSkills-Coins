@@ -98,6 +98,11 @@ public class ShopLoader {
         
         // Parse displayname - supports both direct "displayname" and "item.displayname"
         String displayName = config.getString("item.displayname", config.getString("displayname", id));
+        // Strip legacy color codes so getDisplayColor() works on clean names
+        displayName = displayName.replaceAll("(?i)&[0-9A-FK-OR]", "").trim();
+        if (displayName.isEmpty()) {
+            displayName = id;
+        }
         
         // Parse EconomyShopGUI-style options
         String title = config.getString("title", "");

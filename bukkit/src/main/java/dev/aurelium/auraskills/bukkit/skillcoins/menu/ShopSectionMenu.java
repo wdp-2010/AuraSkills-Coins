@@ -76,37 +76,12 @@ public class ShopSectionMenu {
      */
     public static String formatSectionHeader(ShopSection section) {
         try {
-            String sectionName = section.getDisplayName();
-            if (sectionName == null || sectionName.isEmpty()) {
-                sectionName = section.getId();
-            }
-            if (sectionName == null || sectionName.isEmpty()) {
-                sectionName = "Shop";
-            }
+            String color = section.getDisplayColor();
+            String iconChar = section.getIconChar();
+            String cleanName = ChatColor.stripColor(section.getDisplayName() != null ? 
+                    section.getDisplayName() : section.getId());
 
-            // Remove alternate color codes and leading icons/symbols so we don't duplicate icons
-            String cleaned = sectionName.replaceAll("(?i)&[0-9A-FK-OR]", "").replaceAll("^[^\\p{L}\\p{N}]+", "").trim();
-            if (cleaned.isEmpty()) cleaned = section.getId();
-
-            String lower = cleaned.toLowerCase(Locale.ROOT);
-            String color = "#00FFFF";
-            String icon = "";
-
-            // Map common section keywords to colors and icons
-            if (lower.contains("combat")) { color = "#FF5555"; icon = "⚔ "; }
-            else if (lower.contains("enchant")) { color = "#FF55FF"; icon = "✦ "; }
-            else if (lower.contains("resource")) { color = "#55FF55"; icon = "❖ "; }
-            else if (lower.contains("tool")) { color = "#5555FF"; icon = "⚒ "; }
-            else if (lower.contains("food")) { color = "#FFFF00"; icon = "🍖 "; }
-            else if (lower.contains("block")) { color = "#FFD700"; icon = "⬛ "; }
-            else if (lower.contains("farm")) { color = "#55FF55"; icon = "🌾 "; }
-            else if (lower.contains("potion")) { color = "#FF55FF"; icon = "⚗ "; }
-            else if (lower.contains("redstone")) { color = "#FF5555"; icon = "🔴 "; }
-            else if (lower.contains("skill") || lower.contains("level")) { color = "#FFD700"; icon = "★ "; }
-            else if (lower.contains("token") || lower.contains("exchange")) { color = "#00FFFF"; icon = "🎟 "; }
-            else if (lower.contains("misc")) { color = "#808080"; icon = "⋯ "; }
-
-            return ChatColor.of(color) + icon + ChatColor.of("#FFFFFF") + cleaned;
+            return ChatColor.of(color) + iconChar + ChatColor.DARK_GRAY + cleanName;
         } catch (Exception e) {
             // Fall back to a simple cyan title on error
             return ChatColor.of("#00FFFF") + "Shop";
@@ -121,7 +96,7 @@ public class ShopSectionMenu {
         String name = (section.getDisplayName() != null ? section.getDisplayName().replaceAll("(?i)&[0-9A-FK-OR]", "").replaceAll("^[^\\p{L}\\p{N}]+", "").trim() : section.getId());
         String lower = (name != null ? name.toLowerCase(Locale.ROOT) : "");
         if (!lower.contains("shop")) {
-            header += ChatColor.of("#FFFFFF") + " Shop";
+            header += ChatColor.of("#808080") + " Shop";
         }
         return header;
     }

@@ -36,9 +36,12 @@ public class SkillLevelPurchaseMenu {
     private static final String SELECTION_TITLE = ChatColor.DARK_GRAY + "Select Skill";
     private static final String QUICK_SELECT_TITLE = ChatColor.DARK_GRAY + "Quick Select";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
-    private static final int TOKENS_PER_LEVEL = 10;
     private static final int MIN_QUANTITY = 1;
     private static final int MAX_QUANTITY = 64;
+    
+    // Exponential pricing constants (same as LevelBuyMenu)
+    private static final double BASE_PRICE = 500.0; // 500 coins = 5 tokens for level 1
+    private static final double GROWTH_RATE = 1.08; // 8% growth per level
     
     // Thread-safe player session data
     private final Map<UUID, Skill> selectedSkills = new ConcurrentHashMap<>();

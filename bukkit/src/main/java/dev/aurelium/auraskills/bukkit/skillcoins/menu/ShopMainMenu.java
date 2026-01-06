@@ -283,8 +283,13 @@ public class ShopMainMenu {
                     ItemStack item = new ItemStack(icon);
                     ItemMeta meta = item.getItemMeta();
                     if (meta != null) {
-                        // Use the unified formatted header (icon + color) as the item display name
-                        meta.setDisplayName(ShopSectionMenu.formatSectionHeader(section));
+                        // Use text icon + colored + white text
+                        String color = section.getDisplayColor();
+                        String iconChar = section.getIconChar();
+                        String cleanName = ChatColor.stripColor(section.getDisplayName() != null ? 
+                                section.getDisplayName() : section.getId());
+                        
+                        meta.setDisplayName(ChatColor.of(color) + iconChar + ChatColor.of("#FFFFFF") + cleanName);
                         
                         List<String> lore = new ArrayList<>();
                         lore.add("");
@@ -530,7 +535,7 @@ public class ShopMainMenu {
         if (player == null) return;
 
         try {
-            String skillSelectTitle = ChatColor.GOLD + "✦ " + ChatColor.WHITE + "Select Skill to Buy";
+            String skillSelectTitle = ChatColor.GOLD + "✦ " + ChatColor.of("#808080") + "Select Skill to Buy";
             Inventory inv = Bukkit.createInventory(null, 54, skillSelectTitle);
 
             // Fill background with black glass
