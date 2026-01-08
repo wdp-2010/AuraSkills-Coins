@@ -857,6 +857,38 @@ public class AuraSkills extends JavaPlugin implements AuraSkillsPlugin {
     public dev.aurelium.auraskills.common.skillcoins.SkillCoinsEconomy getSkillCoinsEconomy() {
         return skillCoinsEconomy;
     }
+    
+    /**
+     * Get a player's SkillCoins balance
+     * Public API for other plugins to use
+     * 
+     * @param uuid Player UUID
+     * @return Coins balance
+     */
+    public double getPlayerCoins(java.util.UUID uuid) {
+        if (skillCoinsEconomy == null) return 0.0;
+        try {
+            return skillCoinsEconomy.getBalance(uuid, dev.aurelium.auraskills.common.skillcoins.CurrencyType.COINS);
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
+    
+    /**
+     * Get a player's SkillTokens balance
+     * Public API for other plugins to use
+     * 
+     * @param uuid Player UUID
+     * @return Tokens balance
+     */
+    public double getPlayerTokens(java.util.UUID uuid) {
+        if (skillCoinsEconomy == null) return 0.0;
+        try {
+            return skillCoinsEconomy.getBalance(uuid, dev.aurelium.auraskills.common.skillcoins.CurrencyType.TOKENS);
+        } catch (Exception e) {
+            return 0.0;
+        }
+    }
 
     public dev.aurelium.auraskills.bukkit.skillcoins.shop.ShopLoader getShopLoader() {
         return shopLoader;
