@@ -38,11 +38,11 @@ public class LevelBuyMenu {
     private static final int ITEMS_PER_PAGE = 24;
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0");
     
-    // Exponential pricing system - balanced around shop economy
-    // Base: 500 coins (5 tokens) for first level
-    // Formula: cost = 500 * (1.08 ^ (level - 1))
-    // This scales from 500 coins at level 1 to ~46,000 coins at level 50
-    private static final double BASE_PRICE = 500.0; // 500 coins = 5 tokens
+    // Exponential pricing system in TOKENS - balanced around shop economy
+    // Base: 1 token for first level
+    // Formula (tokens per level): cost = 1 * (1.08 ^ (level - 1)), rounded UP to nearest whole token
+    // This scales from ~1 token at level 1 to larger token costs at late levels
+    private static final double BASE_TOKENS = 1.0; // base cost in tokens
     private static final double GROWTH_RATE = 1.08; // 8% growth per level
     
     // Title prefix to identify this menu
@@ -279,8 +279,8 @@ public class LevelBuyMenu {
         double tokenBalance = economy.getBalance(uuid, CurrencyType.TOKENS);
         
         int levelsToBuy = selectedLevel - currentLevel;
-        double totalCost = calculateTotalCost(currentLevel, selectedLevel);
-        boolean canAfford = tokenBalance >= totalCost;
+        int totalCost = calculateTotalCost(currentLevel, selectedLevel);
+        boolean canAfford = tokenBalance >= (double) totalCost;
         
         // Slot 0: Skill Info
         ItemStack skillItem = new ItemStack(getSkillIcon(skill));
@@ -318,7 +318,7 @@ public class LevelBuyMenu {
                 lore.add("");
                 lore.add(ChatColor.GOLD + "Total Cost: " + ChatColor.WHITE + MONEY_FORMAT.format(totalCost) + " Tokens");
                 lore.add(ChatColor.GRAY + "Average per level: " + ChatColor.WHITE + 
-                        MONEY_FORMAT.format(totalCost / levelsToBuy) + " Tokens");
+                        String.format("%.2f", (double) totalCost / levelsToBuy) + " Tokens");
                 lore.add(ChatColor.GRAY + "Balance after: " + ChatColor.WHITE + 
                         MONEY_FORMAT.format(tokenBalance - totalCost));
                 lore.add("");
@@ -397,7 +397,7 @@ public class LevelBuyMenu {
                 // Selected for purchase - cyan/light blue glass (highlighted)
                 material = Material.LIGHT_BLUE_STAINED_GLASS_PANE;
                 displayName = ChatColor.of("#00FFFF") + "Level " + level + " ★";
-                double levelCost = calculateLevelCost(level);
+                int levelCost = calculateLevelCost(level);
                 lore.add("");
                 lore.add(ChatColor.AQUA + "SELECTED FOR PURCHASE");
                 lore.add("");
@@ -408,7 +408,7 @@ public class LevelBuyMenu {
                 // Not selected, can be purchased - red/orange glass
                 material = Material.RED_STAINED_GLASS_PANE;
                 displayName = ChatColor.RED + "Level " + level;
-                double levelCost = calculateLevelCost(level);
+                int levelCost = calculateLevelCost(level);
                 lore.add("");
                 lore.add(ChatColor.GRAY + "Locked");
                 lore.add("");
@@ -590,11 +590,11 @@ public class LevelBuyMenu {
         UUID uuid = player.getUniqueId();
         
         int levelsToBuy = selectedLevel - currentLevel;
-        double totalCost = calculateTotalCost(currentLevel, selectedLevel);
+        int totalCost = calculateTotalCost(currentLevel, selectedLevel);
         
         double balance = economy.getBalance(uuid, CurrencyType.TOKENS);
         
-        if (balance < totalCost) {
+        if (balance < (double) totalCost) {
             player.sendMessage(ChatColor.RED + "✖ Insufficient tokens!");
             player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1.0f, 1.0f);
             return;
@@ -678,20 +678,21 @@ public class LevelBuyMenu {
     }
     
     /**
-     * Calculate the cost of a single level using exponential formula
-     * Formula: BASE_PRICE * (GROWTH_RATE ^ (level - 1))
-     * Example: Level 1 = 500, Level 2 = 540, Level 10 = 1,000, Level 50 = 46,902
+     * Calculate the cost of a single level using exponential formula (in whole TOKENS)
+     * Formula (tokens per level): BASE_TOKENS * (GROWTH_RATE ^ (level - 1))
+     * Round to nearest whole token (standard rounding, e.g., 1.4 -> 1, 1.5 -> 2).
      */
-    private double calculateLevelCost(int level) {
-        return BASE_PRICE * Math.pow(GROWTH_RATE, level - 1);
+    private int calculateLevelCost(int level) {
+        double raw = BASE_TOKENS * Math.pow(GROWTH_RATE, level - 1);
+        return (int) Math.round(raw);
     }
     
     /**
      * Calculate total cost for purchasing multiple levels (from startLevel+1 to endLevel)
-     * This sums the individual exponential costs for each level
+     * This sums the individual level token costs (each rounded up)
      */
-    private double calculateTotalCost(int startLevel, int endLevel) {
-        double total = 0.0;
+    private int calculateTotalCost(int startLevel, int endLevel) {
+        int total = 0;
         for (int i = startLevel + 1; i <= endLevel; i++) {
             total += calculateLevelCost(i);
         }

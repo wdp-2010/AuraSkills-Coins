@@ -7,8 +7,21 @@
 
 # Configuration
 PROJECT_DIR="/root/WDP-Rework/SkillCoins/AuraSkills-Coins"
-CONTAINER_NAME="b8f24891-b5be-4847-a96e-c705c500aece"  # Use container name
-SERVER_DIR="/var/lib/pterodactyl/volumes/b8f24891-b5be-4847-a96e-c705c500aece"
+PLUGIN_NAME="AuraSkills"
+PLUGIN_VERSION="2.3.10"
+CONTAINER_ID_DEV="b8f24891-b5be-4847-a96e-c705c500aece"
+CONTAINER_ID_MAIN="27298ea1-0c1b-4b41-a5aa-a7d29ff04566"
+
+# Determine which server to deploy to
+if [ "$1" == "main" ] || [ "$1" == "production" ] || [ "$1" == "prod" ]; then
+    CONTAINER_NAME="$CONTAINER_ID_MAIN"
+    SERVER_NAME="MAIN"
+else
+    CONTAINER_NAME="$CONTAINER_ID_DEV"
+    SERVER_NAME="DEV"
+fi
+
+SERVER_DIR="/var/lib/pterodactyl/volumes/${CONTAINER_NAME}"
 PLUGINS_DIR="${SERVER_DIR}/plugins"
 # Attempt to find the latest built AuraSkills JAR automatically
 LATEST_JAR_FILE=$(ls -1 "${PROJECT_DIR}/bukkit/build/libs/"AuraSkills-*.jar 2>/dev/null | sort -V | tail -1)
@@ -57,7 +70,8 @@ fi
 
 echo ""
 echo -e "${CYAN}╔══════════════════════════════════════════════════════════╗${NC}"
-echo -e "${CYAN}║         AuraSkills SkillCoins Deployment Script          ║${NC}"
+echo -e "${CYAN}║      AuraSkills SkillCoins Deployment Script (${SERVER_NAME})     ║${NC}"
+echo -e "${CYAN}║                   Version: ${PLUGIN_VERSION}                        ║${NC}"
 echo -e "${CYAN}╚══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
@@ -198,34 +212,17 @@ if [[ ! -d "$PLUGINS_DIR" ]]; then
 fi
 
 ################################################################################
-# STEP 3: Clean Old Installation
+# STEP 3: Deploy New Plugin (PRESERVE ALL CONFIGS)
 ################################################################################
-log_step "Removing old plugin files..."
+log_step "Deploying new plugin (configs preserved)..."
 
-# Remove old AuraSkills folder
-if [[ -d "${PLUGINS_DIR}/AuraSkills" ]]; then
-    log_info "Deleting: ${PLUGINS_DIR}/AuraSkills"
-    rm -rf "${PLUGINS_DIR}/AuraSkills"
-    
-    if [[ -d "${PLUGINS_DIR}/AuraSkills" ]]; then
-        log_error "Failed to remove AuraSkills directory"
-        exit 1
-    fi
-    log_success "AuraSkills data folder removed"
-fi
-
-# Remove old JAR
+# Remove old JAR only
 if [[ -f "${PLUGINS_DIR}/${JAR_NAME}" ]]; then
     rm -f "${PLUGINS_DIR}/${JAR_NAME}"
     log_success "Old JAR removed"
 fi
 
-################################################################################
-# STEP 4: Deploy New Plugin
-################################################################################
-log_step "Deploying new plugin..."
-
-# Copy JAR
+# Copy new JAR
 log_info "Copying JAR to plugins directory..."
 if ! cp "$BUILD_JAR" "${PLUGINS_DIR}/"; then
     log_error "Failed to copy JAR to plugins directory"
@@ -246,7 +243,7 @@ else
 fi
 
 ################################################################################
-# STEP 5: Start Container
+# STEP 4: Start Container
 ################################################################################
 log_step "Starting Minecraft server container..."
 
@@ -258,7 +255,7 @@ if ! docker start "$CONTAINER_NAME" >/dev/null 2>&1; then
 fi
 
 # Verify container starts using docker inspect
-TIMEOUT=60
+TIMEOUT=120
 ELAPSED=0
 
 while [[ $ELAPSED -lt $TIMEOUT ]]; do
@@ -278,14 +275,20 @@ while [[ $ELAPSED -lt $TIMEOUT ]]; do
 done
 
 if ! is_running; then
-    echo ""  # New line after progress
-    log_error "Container failed to start within ${TIMEOUT}s"
-    log_error "Check logs: docker logs ${CONTAINER_NAME}"
-    exit 1
+    # Try to detect server start from logs in case docker inspect failed to report running
+    if docker logs "${CONTAINER_NAME}" 2>/dev/null | tail -200 | grep -q "Done ("; then
+        echo ""  # New line after progress
+        log_warning "Container did not report as running within ${TIMEOUT}s, but server 'Done' message detected in logs. Continuing."
+    else
+        echo ""  # New line after progress
+        log_error "Container failed to start within ${TIMEOUT}s"
+        log_error "Check logs: docker logs ${CONTAINER_NAME}"
+        exit 1
+    fi
 fi
 
 ################################################################################
-# STEP 6: Monitor Server Startup
+# STEP 5: Monitor Server Startup
 ################################################################################
 log_step "Monitoring server startup..."
 

@@ -117,24 +117,33 @@ public class SkillCoinsEconomyProvider implements Economy {
     
     @Override
     public double getBalance(String playerName) {
-        if (playerName == null || playerName.isEmpty()) return 0.0;
+        if (playerName == null || playerName.isEmpty()) {
+            plugin.getLogger().warning("getBalance(String) failed: Empty player name");
+            return 0.0;
+        }
         try {
             @SuppressWarnings("deprecation")
             OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
             return getBalance(player);
         } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error getting balance for " + playerName, e);
+            plugin.getLogger().log(Level.WARNING, "Error getting balance for player name: " + playerName, e);
             return 0.0;
         }
     }
     
     @Override
     public double getBalance(OfflinePlayer player) {
-        if (player == null || player.getUniqueId() == null) return 0.0;
+        if (player == null || player.getUniqueId() == null) {
+            plugin.getLogger().warning("getBalance(OfflinePlayer) called with null player or UUID");
+            return 0.0;
+        }
         try {
-            return economyProvider.getBalance(player.getUniqueId(), getCurrency());
+            UUID uuid = player.getUniqueId();
+            economyProvider.load(uuid); // Ensure data is loaded for offline players
+            double balance = economyProvider.getBalance(uuid, getCurrency());
+            return balance;
         } catch (Exception e) {
-            plugin.getLogger().log(Level.WARNING, "Error getting balance for " + player.getName(), e);
+            plugin.getLogger().log(Level.WARNING, "Error getting balance for " + (player != null ? player.getName() : "unknown"), e);
             return 0.0;
         }
     }
@@ -172,6 +181,7 @@ public class SkillCoinsEconomyProvider implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(String playerName, double amount) {
         if (playerName == null || playerName.isEmpty()) {
+            plugin.getLogger().warning("withdrawPlayer(String) failed: Invalid player name");
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Invalid player name");
         }
         try {
@@ -187,27 +197,27 @@ public class SkillCoinsEconomyProvider implements Economy {
     @Override
     public EconomyResponse withdrawPlayer(OfflinePlayer player, double amount) {
         if (player == null || player.getUniqueId() == null) {
+            plugin.getLogger().warning("withdrawPlayer(OfflinePlayer) failed: Invalid player");
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Invalid player");
         }
-        
         if (amount < 0) {
+            plugin.getLogger().warning("withdrawPlayer(OfflinePlayer) failed: Negative amount");
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cannot withdraw negative amount");
         }
-        
         try {
             UUID uuid = player.getUniqueId();
+            economyProvider.load(uuid); // Ensure data is loaded for offline players
             double balance = economyProvider.getBalance(uuid, getCurrency());
-            
             if (balance < amount) {
+                plugin.getLogger().warning("withdrawPlayer(OfflinePlayer) failed: Insufficient funds");
                 return new EconomyResponse(0, balance, EconomyResponse.ResponseType.FAILURE, "Insufficient funds");
             }
-            
             economyProvider.subtractBalance(uuid, getCurrency(), amount);
             double newBalance = economyProvider.getBalance(uuid, getCurrency());
-            
-            return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+            EconomyResponse response = new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+            return response;
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Error withdrawing from " + player.getName(), e);
+            plugin.getLogger().log(Level.SEVERE, "Error withdrawing from " + (player != null ? player.getName() : "unknown"), e);
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Internal error");
         }
     }
@@ -240,21 +250,22 @@ public class SkillCoinsEconomyProvider implements Economy {
     @Override
     public EconomyResponse depositPlayer(OfflinePlayer player, double amount) {
         if (player == null || player.getUniqueId() == null) {
+            plugin.getLogger().warning("depositPlayer(OfflinePlayer) failed: Invalid player");
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Invalid player");
         }
-        
         if (amount < 0) {
+            plugin.getLogger().warning("depositPlayer(OfflinePlayer) failed: Negative amount");
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Cannot deposit negative amount");
         }
-        
         try {
             UUID uuid = player.getUniqueId();
+            economyProvider.load(uuid); // Ensure data is loaded for offline players
             economyProvider.addBalance(uuid, getCurrency(), amount);
             double newBalance = economyProvider.getBalance(uuid, getCurrency());
-            
-            return new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+            EconomyResponse response = new EconomyResponse(amount, newBalance, EconomyResponse.ResponseType.SUCCESS, null);
+            return response;
         } catch (Exception e) {
-            plugin.getLogger().log(Level.SEVERE, "Error depositing to " + player.getName(), e);
+            plugin.getLogger().log(Level.SEVERE, "Error depositing to " + (player != null ? player.getName() : "unknown"), e);
             return new EconomyResponse(0, 0, EconomyResponse.ResponseType.FAILURE, "Internal error");
         }
     }

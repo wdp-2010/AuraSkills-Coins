@@ -22,6 +22,10 @@ public class SkillCoinsEconomy implements EconomyProvider {
     
     @Override
     public double getBalance(UUID uuid, CurrencyType type) {
+        // Load data from storage if not already in memory (for offline players)
+        if (!balances.containsKey(uuid)) {
+            load(uuid);
+        }
         return balances.computeIfAbsent(uuid, k -> new ConcurrentHashMap<>())
                 .getOrDefault(type, 0.0);
     }

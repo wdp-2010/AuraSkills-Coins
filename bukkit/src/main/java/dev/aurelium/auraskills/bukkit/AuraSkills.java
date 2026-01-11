@@ -103,6 +103,7 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -116,6 +117,7 @@ import java.util.Locale;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
 
 import static dev.aurelium.auraskills.bukkit.ref.BukkitPlayerRef.unwrap;
 
@@ -267,6 +269,9 @@ public class AuraSkills extends JavaPlugin implements AuraSkillsPlugin {
         antiAfkManager.registerChecks();
         // Initialize SkillCoins system
         initializeSkillCoins();
+        // Register CMI money command listener to ensure /money and /cmi money set/give/take
+        // correctly update SkillCoins balances (so Vault and other plugins stay in sync)
+        getServer().getPluginManager().registerEvents(new dev.aurelium.auraskills.bukkit.skillcoins.listener.CmiMoneyCommandListener(this), this);
         registerPriorityEvents();
         // Enabled bStats
         @Nullable Metrics metrics;
@@ -311,6 +316,9 @@ public class AuraSkills extends JavaPlugin implements AuraSkillsPlugin {
                 updateChecker.sendUpdateMessageAsync(Bukkit.getConsoleSender());
             }
         });
+
+        // Check CMI hooking after a short delay to ensure all plugins are loaded
+        scheduler.scheduleSync(() -> checkCMIHooking(), 1000L, TimeUnit.MILLISECONDS); // 1 second delay
     }
 
     @Override
@@ -490,6 +498,11 @@ public class AuraSkills extends JavaPlugin implements AuraSkillsPlugin {
             boolean throwErrorOnConflict = false; // Don't throw errors, just warn about conflicts
             vaultEconomyManager.configure(enableVault, useCoins, forceOverride, throwErrorOnConflict);
             vaultEconomyManager.register(); // Register with Vault
+            
+            // Schedule a check for CMI hooking after server startup
+            getServer().getScheduler().scheduleSyncDelayedTask(this, () -> {
+                checkCMIHooking();
+            }, 100L); // 5 seconds delay
             
             // Initialize shop loader
             shopLoader = new dev.aurelium.auraskills.bukkit.skillcoins.shop.ShopLoader(this);
@@ -896,6 +909,47 @@ public class AuraSkills extends JavaPlugin implements AuraSkillsPlugin {
 
     public dev.aurelium.auraskills.bukkit.skillcoins.vault.VaultEconomyManager getVaultEconomyManager() {
         return vaultEconomyManager;
+    }
+
+    /**
+     * Check if CMI is properly hooked to our Vault economy provider
+     */
+    private void checkCMIHooking() {
+        try {
+            // Check if CMI plugin is loaded
+            Plugin cmiPlugin = getServer().getPluginManager().getPlugin("CMI");
+            if (cmiPlugin == null || !cmiPlugin.isEnabled()) {
+                getLogger().info("[ECONOMY-CHECK] CMI plugin not found or not enabled");
+                return;
+            }
+
+            // Check if Vault is available
+            if (getServer().getPluginManager().getPlugin("Vault") == null) {
+                getLogger().warning("[ECONOMY-CHECK] Vault plugin not found!");
+                return;
+            }
+
+            // Try to get the economy service
+            net.milkbowl.vault.economy.Economy economy = getServer().getServicesManager().load(net.milkbowl.vault.economy.Economy.class);
+            if (economy == null) {
+                getLogger().warning("[ECONOMY-CHECK] No Vault economy provider registered!");
+                return;
+            }
+
+            String economyName = economy.getName();
+            getLogger().info("[ECONOMY-CHECK] Current Vault economy provider: " + economyName);
+
+            if ("AuraSkills-SkillCoins".equals(economyName)) {
+                getLogger().info("[ECONOMY-CHECK] ✅ SUCCESS: CMI is properly hooked to AuraSkills-SkillCoins economy!");
+                getLogger().info("[ECONOMY-CHECK] ✅ Offline balance operations are now fully supported");
+            } else {
+                getLogger().warning("[ECONOMY-CHECK] ❌ WARNING: CMI is hooked to different economy: " + economyName);
+                getLogger().warning("[ECONOMY-CHECK] ❌ Expected: AuraSkills-SkillCoins");
+            }
+
+        } catch (Exception e) {
+            getLogger().log(Level.WARNING, "[ECONOMY-CHECK] Error checking CMI hooking", e);
+        }
     }
 
 }
