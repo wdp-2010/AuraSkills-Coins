@@ -9,6 +9,9 @@ import dev.aurelium.auraskills.common.user.User;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import dev.aurelium.auraskills.common.util.file.FileUtil;
+import org.spongepowered.configurate.ConfigurationNode;
+import java.io.File;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -39,10 +42,10 @@ public class SkillLevelPurchaseMenu {
     private static final int MIN_QUANTITY = 1;
     private static final int MAX_QUANTITY = 64;
     
-    // Exponential pricing in TOKENS - base: 1 token for first level
-    // Formula (tokens per level): BASE_TOKENS * (GROWTH_RATE ^ (level - 1)), rounded UP
-    private static final double BASE_TOKENS = 1.0;
-    private static final double GROWTH_RATE = 1.08; // 8% growth per level
+    // Pricing values loaded from shop-config.yml (skill-levels.base-price and skill-levels.multiplier)
+    // Defaults: base 1 token, multiplier 1.08
+    private double baseTokens = 1.0; // base cost in tokens (can be configured)
+    private double growthRate = 1.08; // growth per level (can be configured)
     
     // Thread-safe player session data
     private final Map<UUID, Skill> selectedSkills = new ConcurrentHashMap<>();
@@ -55,6 +58,8 @@ public class SkillLevelPurchaseMenu {
         this.plugin = plugin;
         this.economy = economy;
         this.navbarManager = new SharedNavbarManager(plugin, economy);
+        // Load configurable pricing
+        loadPricingConfig();
     }
     
     public void open(Player player) {
@@ -765,6 +770,34 @@ public class SkillLevelPurchaseMenu {
         }
     }
     
+    private void loadPricingConfig() {
+        try {
+            // Prefer user config in plugin data folder if present
+            File userFile = new File(plugin.getDataFolder(), "shop-config.yml");
+            ConfigurationNode cfg = null;
+            if (userFile.exists()) {
+                cfg = FileUtil.loadYamlFile(userFile);
+                if (cfg != null && !cfg.node("skill-levels").virtual()) {
+                    baseTokens = cfg.node("skill-levels", "base-price").getDouble(baseTokens);
+                    growthRate = cfg.node("skill-levels", "multiplier").getDouble(growthRate);
+                    plugin.getLogger().info("Loaded shop-config.yml from data folder: base=" + baseTokens + ", multiplier=" + growthRate);
+                    return;
+                }
+            }
+            // Fallback to embedded default
+            cfg = FileUtil.loadEmbeddedYamlFile("shop-config.yml", plugin);
+            if (cfg != null && !cfg.node("skill-levels").virtual()) {
+                baseTokens = cfg.node("skill-levels", "base-price").getDouble(baseTokens);
+                growthRate = cfg.node("skill-levels", "multiplier").getDouble(growthRate);
+                if (cfg.node("debug", "log-pricing").getBoolean(false)) {
+                    plugin.getLogger().info("Skill level pricing (embedded) loaded: base=" + baseTokens + ", multiplier=" + growthRate);
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().log(java.util.logging.Level.WARNING, "Failed to load shop-config.yml pricing, using defaults", e);
+        }
+    }
+
     private Material getSkillIcon(Skill skill) {
         if (skill == null) return Material.EXPERIENCE_BOTTLE;
         switch (skill.name().toUpperCase()) {
@@ -793,7 +826,7 @@ public class SkillLevelPurchaseMenu {
      * Round to nearest whole token (standard rounding, e.g., 1.4 -> 1, 1.5 -> 2).
      */
     private int calculateLevelCost(int level) {
-        double raw = BASE_TOKENS * Math.pow(GROWTH_RATE, level - 1);
+        double raw = baseTokens * Math.pow(growthRate, level - 1);
         return (int) Math.round(raw);
     }
     

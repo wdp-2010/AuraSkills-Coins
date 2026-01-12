@@ -308,18 +308,23 @@ public class TransactionMenu {
                     ChatColor.of("#808080") + "Remove 1 from quantity");
             
             // Quantity display (slot 22 - center)
-            ItemStack qtyDisplay = new ItemStack(Material.PAPER);
-            ItemMeta qtyMeta = qtyDisplay.getItemMeta();
-            if (qtyMeta != null) {
-                qtyMeta.setDisplayName(ChatColor.of("#FFFF00") + "Quantity: " + ChatColor.of("#FFFFFF") + quantity);
-                List<String> qtyLore = new ArrayList<>();
-                qtyLore.add("");
-                qtyLore.add(ChatColor.of("#808080") + "Use the buttons to adjust");
-                qtyLore.add(ChatColor.of("#808080") + "the quantity to buy/sell");
-                qtyMeta.setLore(qtyLore);
-                qtyDisplay.setItemMeta(qtyMeta);
+            // Only show paper for unstackable items (max stack size < 64)
+            int maxStackSize = shopItem.getMaterial().getMaxStackSize();
+            if (maxStackSize < 64) {
+                ItemStack qtyDisplay = new ItemStack(Material.PAPER, Math.min(quantity, 64));
+                ItemMeta qtyMeta = qtyDisplay.getItemMeta();
+                if (qtyMeta != null) {
+                    qtyMeta.setDisplayName(ChatColor.of("#FFFF00") + "Quantity: " + ChatColor.of("#FFFFFF") + quantity);
+                    List<String> qtyLore = new ArrayList<>();
+                    qtyLore.add("");
+                    qtyLore.add(ChatColor.of("#808080") + "Use the buttons to adjust");
+                    qtyLore.add(ChatColor.of("#808080") + "the quantity to buy/sell");
+                    qtyMeta.setLore(qtyLore);
+                    qtyDisplay.setItemMeta(qtyMeta);
+                }
+                inv.setItem(22, qtyDisplay);
             }
-            inv.setItem(22, qtyDisplay);
+            // For stackable items (max stack size == 64), don't show the paper - slot 22 stays as border
             
             // +1 button (slot 24)
             createQuantityButton(inv, 24, Material.LIME_TERRACOTTA, 

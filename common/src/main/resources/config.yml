@@ -5,7 +5,7 @@
 # |             Source Code: https://github.com/Archy-X/AuraSkills             | #
 # |      Config Guide: https://wiki.aurelium.dev/auraskills/main-config        | #
 # +----------------------------------------------------------------------------+ #
-# Plugin made by Archy
+# Plugin made by Archy and fork by WDP Server 
 
 sql:
   enabled: false

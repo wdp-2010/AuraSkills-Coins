@@ -427,6 +427,8 @@ public class AuraSkills extends JavaPlugin implements AuraSkillsPlugin {
         loader.generateUserFile("abilities.yml");
         loader.generateUserFile("mana_abilities.yml");
         loader.generateUserFile("xp_requirements.yml");
+        // Generate shop config so server admins can customize skill level pricing
+        loader.generateUserFile("shop-config.yml");
         for (Skill skill : Skills.values()) {
             String sources = "sources/" + skill.name().toLowerCase(Locale.ROOT) + ".yml";
             loader.generateUserFile(sources);
