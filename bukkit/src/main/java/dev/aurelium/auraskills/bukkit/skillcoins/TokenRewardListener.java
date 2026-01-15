@@ -14,7 +14,7 @@ import org.bukkit.event.Listener;
  * 
  * ECONOMY BALANCE V2:
  * - Coins are awarded ONLY every 5 levels (makes each reward feel meaningful)
- * - Tokens are awarded ONLY every 10 levels (premium currency, 1 token = 500 coins worth)
+ * - Tokens are awarded ONLY every 10 levels (premium currency, 1 token = 1000 coins worth)
  * - Scaling rewards encourage continued progression without being overwhelming
  * 
  * Expected total per skill (100 levels):

@@ -1,7 +1,7 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                    TOKEN EXCHANGE - BALANCED ECONOMY V2                       ║
 # ╠══════════════════════════════════════════════════════════════════════════════╣
-# ║ CORE EXCHANGE RATE: 1 Token = 500 SkillCoins                                  ║
+# ║ CORE EXCHANGE RATE: 1 Token = 1000 SkillCoins                                 ║
 # ║                                                                               ║
 # ║ Tokens are the premium currency earned through:                               ║
 # ║ - Skill level milestones (every 10 levels)                                    ║
@@ -16,8 +16,8 @@
 
 # Token Exchange Configuration
 exchange:
-  # Base rate: 1 token = 500 coins
-  rate: 500
+  # Base rate: 1 token = 1000 coins
+  rate: 1000
   
   # Minimum tokens to purchase
   min-purchase: 1
@@ -27,10 +27,10 @@ exchange:
   
   # Preset amounts for quick purchase
   presets:
-    - 1      # 500 coins
-    - 5      # 2,500 coins
+    - 1      # 1000 coins
+    - 5      # 5,000 coins
     - 10     # 5,000 coins
-    - 25     # 12,500 coins
+    - 25     # 25,000 coins
     - 50     # 25,000 coins
     - 100    # 50,000 coins
 
@@ -44,7 +44,7 @@ display:
   token-lore:
     - ""
     - "&7Premium currency for special purchases"
-    - "&7Rate: &e1 Token &7= &6500 SkillCoins"
+    - "&7Rate: &e1 Token &7= &61000 SkillCoins"
     - ""
     - "&a▸ Used for enchantments"
     - "&a▸ Used for skill level purchases"

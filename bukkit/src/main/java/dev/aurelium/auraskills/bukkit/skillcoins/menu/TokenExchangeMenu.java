@@ -20,6 +20,10 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
+import dev.aurelium.auraskills.common.util.file.FileUtil;
+import org.spongepowered.configurate.ConfigurationNode;
+import java.io.File;
+
 /**
  * Token Exchange menu for buying tokens with coins - FULLY REWRITTEN
  * 
@@ -35,7 +39,7 @@ public class TokenExchangeMenu {
     private static final String MENU_TITLE = "§a🎟" + ChatColor.DARK_GRAY + " Token Exchange";
     private static final String PRESET_TITLE = "§e⚡" + ChatColor.DARK_GRAY + " Quick Select Amount";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0.00");
-    private static final int COINS_PER_TOKEN = 500; // Base rate: 500 coins = 1 token (premium currency)
+    private int coinsPerToken = 1000; // Default rate
     private static final int MIN_QUANTITY = 1;
     private static final int MAX_QUANTITY = 1000;
     
@@ -50,6 +54,26 @@ public class TokenExchangeMenu {
         if (economy == null) throw new IllegalArgumentException("Economy provider cannot be null");
         this.plugin = plugin;
         this.economy = economy;
+        loadConfig();
+    }
+
+    private void loadConfig() {
+        try {
+            File userFile = new File(plugin.getDataFolder(), "shop-config.yml");
+            if (userFile.exists()) {
+                ConfigurationNode cfg = FileUtil.loadYamlFile(userFile);
+                if (cfg != null && !cfg.node("token-exchange").virtual()) {
+                    coinsPerToken = cfg.node("token-exchange", "coins-per-token").getInt(coinsPerToken);
+                }
+            } else {
+                ConfigurationNode cfg = FileUtil.loadEmbeddedYamlFile("shop-config.yml", plugin);
+                if (cfg != null && !cfg.node("token-exchange").virtual()) {
+                    coinsPerToken = cfg.node("token-exchange", "coins-per-token").getInt(coinsPerToken);
+                }
+            }
+        } catch (Exception e) {
+            plugin.getLogger().log(Level.WARNING, "Failed to load shop-config.yml token exchange pricing, using defaults", e);
+        }
     }
     
     /**
@@ -156,7 +180,7 @@ public class TokenExchangeMenu {
             playerQuantities.put(uuid, quantity);
             
             // Calculate cost with overflow protection
-            long totalCoinsLong = (long) COINS_PER_TOKEN * quantity;
+            long totalCoinsLong = (long) coinsPerToken * quantity;
             if (totalCoinsLong > Integer.MAX_VALUE) {
                 plugin.getLogger().warning("Overflow detected in token cost calculation");
                 totalCoinsLong = Integer.MAX_VALUE;
@@ -186,7 +210,7 @@ public class TokenExchangeMenu {
             lore.add("");
             lore.add(ChatColor.of("#d0de34") + "Tokens to purchase: " + ChatColor.of("#FFFFFF") + quantity);
             lore.add(ChatColor.GRAY + "Exchange Rate: " + ChatColor.of("#FFD700") + 
-                    COINS_PER_TOKEN + " ⛃" + ChatColor.of("#808080") + " = " + 
+                    coinsPerToken + " ⛃" + ChatColor.of("#808080") + " = " + 
                     ChatColor.GREEN + "1 🎟");
             lore.add("");
             lore.add(ChatColor.WHITE + "Total Cost: " + ChatColor.GOLD + 
@@ -470,7 +494,7 @@ public class TokenExchangeMenu {
         
         try {
             // Calculate with overflow protection
-            long totalCoinsLong = (long) COINS_PER_TOKEN * quantity;
+            long totalCoinsLong = (long) coinsPerToken * quantity;
             if (totalCoinsLong > Integer.MAX_VALUE) {
                 player.sendMessage(ChatColor.of("#FF5555") + "✖ Purchase amount too large!");
                 return;
@@ -604,7 +628,7 @@ public class TokenExchangeMenu {
             List<String> lore = new ArrayList<>();
             lore.add("");
             lore.add(ChatColor.of("#808080") + "Cost: " + ChatColor.of("#FFD700") + 
-                    MONEY_FORMAT.format(COINS_PER_TOKEN * amount) + " Coins");
+                    MONEY_FORMAT.format(coinsPerToken * amount) + " Coins");
             lore.add("");
             lore.add(ChatColor.of("#55FF55") + "▸ Click to select!");
             meta.setLore(lore);
