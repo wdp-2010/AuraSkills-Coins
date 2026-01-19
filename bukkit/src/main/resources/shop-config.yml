@@ -1,7 +1,12 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
 # ║                    SKILLCOINS SHOP CONFIGURATION                              ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
-
+#
+# IMPORTANT: All prices are configured here and in the shop YAML files!
+# - Token exchange rate: coins-per-token below
+# - Item prices: Defined in SkillCoinsShop/shops/*.yml files
+# - Spawner prices: Defined in SkillCoinsShop/shops/Spawners.yml
+#
 # Configuration version - DO NOT EDIT
 config-version: 1
 

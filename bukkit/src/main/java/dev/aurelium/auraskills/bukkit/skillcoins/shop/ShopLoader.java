@@ -200,10 +200,7 @@ public class ShopLoader {
 
         EntityType spawnerType = null;
         ShopItem.SpawnerTier spawnerTier = ShopItem.SpawnerTier.BASIC;
-        boolean isSpawnerPack = false;
         int packSize = 1;
-        boolean isMysteryBox = false;
-        double mysteryRarity = 0.0;
 
         if (section.contains("spawnertype")) {
             String spawnerTypeName = section.getString("spawnertype");
@@ -228,19 +225,12 @@ public class ShopLoader {
             }
         }
 
-        if (section.contains("spawnerpack")) {
-            isSpawnerPack = section.getBoolean("spawnerpack");
-            packSize = section.getInt("packsize", 4);
-        }
-
-        if (section.contains("mysterybox")) {
-            isMysteryBox = section.getBoolean("mysterybox");
-            mysteryRarity = section.getDouble("rarity", 0.5);
-            type = ShopItem.ItemType.SPAWNER;
+        if (section.contains("packsize")) {
+            packSize = section.getInt("packsize", 1);
         }
 
         return new ShopItem(material, buyPrice, sellPrice, enchantments, type, skillName, tokenAmount, currency,
-                spawnerType, spawnerTier, isSpawnerPack, packSize, isMysteryBox, mysteryRarity);
+                spawnerType, spawnerTier, packSize);
     }
 
     public List<ShopSection> getSections() {
@@ -252,6 +242,35 @@ public class ShopLoader {
                 .filter(s -> s.getId().equalsIgnoreCase(id))
                 .findFirst()
                 .orElse(null);
+    }
+
+    public ShopItem getSpawnerItem(EntityType entityType, ShopItem.SpawnerTier tier) {
+        for (ShopSection section : sections) {
+            for (ShopItem item : section.getItems()) {
+                if (item.isSpawner() &&
+                    item.getSpawnerType() == entityType &&
+                    item.getSpawnerTier() == tier) {
+                    return item;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<ShopItem> getSpawnerItems() {
+        List<ShopItem> spawners = new ArrayList<>();
+        for (ShopSection section : sections) {
+            for (ShopItem item : section.getItems()) {
+                if (item.isSpawner()) {
+                    spawners.add(item);
+                }
+            }
+        }
+        return spawners;
+    }
+
+    public double getTokenExchangeRate() {
+        return 1000;
     }
 
     private void copyDefaultConfigs() {

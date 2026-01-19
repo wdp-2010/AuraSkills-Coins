@@ -1,172 +1,216 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                    AURASKILLS SPAWNER SHOP - SMART SYSTEM                     ║
+# ║                    AURASKILLS SPAWNER SHOP - TIER SYSTEM                      ║
 # ╠══════════════════════════════════════════════════════════════════════════════╣
 # ║ FEATURES:                                                                    ║
 # ║ - Individual spawners with fair economy pricing                              ║
-# ║ - Spawner Packs: Buy 4 for 15% discount (like a cage!)                       ║
-# ║ - Tier System: BASIC → ENHANCED → HYPER → OMEGA (0.5x, 1x, 2x, 3x spawn!)   ║
-# ║ - Mystery Boxes: Random spawner with rarity-based drops                      ║
+# ║ - Tier System: BASIC → ENHANCED → HYPER → OMEGA (1x, 1.5x, 2x, 3x spawn!)   ║
 # ║ - Smart sell-back: Get 50% of value when you resell                          ║
+# ║ - All prices configurable in this file - NO hardcoded values!                ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
 
 pages:
   page1:
     items:
-      # ═══════ MYSTERY BOXES (Top of Shop) ═══════
+      # ═══════ COMMON SPAWNERS (Utility/Farm) ═══════
       '0':
-        material: CHEST
-        mysterybox: true
-        rarity: 0.15
-        buy: 50000
-        sell: 5000
-        name: "&6&lCommon Mystery Box"
-      '1':
-        material: CHEST
-        mysterybox: true
-        rarity: 0.35
-        buy: 100000
-        sell: 10000
-        name: "&5&lRare Mystery Box"
-      '2':
-        material: CHEST
-        mysterybox: true
-        rarity: 0.60
-        buy: 200000
-        sell: 20000
-        name: "&3&lEpic Mystery Box"
-      '3':
-        material: CHEST
-        mysterybox: true
-        rarity: 0.90
-        buy: 500000
-        sell: 50000
-        name: "&4&lLegendary Mystery Box"
-
-      # ═══════ BASIC SPAWNERS - INDIVIDUAL ═══════
-      # Cheap utility/farm spawners
-      '4':
         material: SPAWNER
         spawnertype: SKELETON
         spawnertier: BASIC
         buy: 50000
         sell: 25000
-      '5':
+      '1':
         material: SPAWNER
         spawnertype: ZOMBIE
         spawnertier: BASIC
         buy: 50000
         sell: 25000
-      '6':
+      '2':
         material: SPAWNER
         spawnertype: SPIDER
         spawnertier: BASIC
         buy: 45000
         sell: 22500
-      '7':
+      '3':
         material: SPAWNER
         spawnertype: CAVE_SPIDER
         spawnertier: BASIC
         buy: 60000
         sell: 30000
-      '8':
+      '4':
         material: SPAWNER
         spawnertype: CREEPER
         spawnertier: BASIC
         buy: 75000
         sell: 37500
-      '9':
+      '5':
         material: SPAWNER
         spawnertype: WITCH
         spawnertier: BASIC
         buy: 150000
         sell: 75000
-
-      # ═══════ BASIC SPAWNERS - FARMS ═══════
-      '10':
+      '6':
         material: SPAWNER
         spawnertype: COW
         spawnertier: BASIC
         buy: 75000
         sell: 37500
-      '11':
+      '7':
         material: SPAWNER
         spawnertype: PIG
         spawnertier: BASIC
         buy: 50000
         sell: 25000
-      '12':
+      '8':
         material: SPAWNER
         spawnertype: SHEEP
         spawnertier: BASIC
         buy: 45000
         sell: 22500
-      '13':
+      '9':
         material: SPAWNER
         spawnertype: CHICKEN
         spawnertier: BASIC
         buy: 35000
         sell: 17500
-      '14':
+      '10':
         material: SPAWNER
         spawnertype: RABBIT
         spawnertier: BASIC
         buy: 45000
         sell: 22500
 
-      # ═══════ SPAWNER PACKS (4x with 15% DISCOUNT!) ═══════
+      # ═══════ UNCOMMON SPAWNERS ═══════
+      '11':
+        material: SPAWNER
+        spawnertype: ENDERMAN
+        spawnertier: BASIC
+        buy: 175000
+        sell: 87500
+      '12':
+        material: SPAWNER
+        spawnertype: SHULKER
+        spawnertier: BASIC
+        buy: 200000
+        sell: 100000
+      '13':
+        material: SPAWNER
+        spawnertype: PHANTOM
+        spawnertier: BASIC
+        buy: 150000
+        sell: 75000
+      '14':
+        material: SPAWNER
+        spawnertype: IRON_GOLEM
+        spawnertier: BASIC
+        buy: 300000
+        sell: 150000
       '15':
         material: SPAWNER
-        spawnertype: SKELETON
+        spawnertype: PIGLIN_BRUTE
         spawnertier: BASIC
-        spawnerpack: true
-        packsize: 4
-        buy: 170000
-        sell: 100000
+        buy: 500000
+        sell: 250000
       '16':
         material: SPAWNER
-        spawnertype: ZOMBIE
+        spawnertype: SQUID
         spawnertier: BASIC
-        spawnerpack: true
-        packsize: 4
-        buy: 170000
-        sell: 100000
+        buy: 100000
+        sell: 50000
       '17':
         material: SPAWNER
-        spawnertype: CREEPER
+        spawnertype: GLOW_SQUID
         spawnertier: BASIC
-        spawnerpack: true
-        packsize: 4
-        buy: 255000
-        sell: 150000
+        buy: 150000
+        sell: 75000
       '18':
         material: SPAWNER
-        spawnertype: COW
+        spawnertype: SLIME
         spawnertier: BASIC
-        spawnerpack: true
-        packsize: 4
-        buy: 255000
-        sell: 150000
+        buy: 200000
+        sell: 100000
+
+      # ═══════ RARE SPAWNERS ═══════
+      '19':
+        material: SPAWNER
+        spawnertype: WOLF
+        spawnertier: BASIC
+        buy: 125000
+        sell: 62500
+      '20':
+        material: SPAWNER
+        spawnertype: CAT
+        spawnertier: BASIC
+        buy: 40000
+        sell: 20000
+      '21':
+        material: SPAWNER
+        spawnertype: PARROT
+        spawnertier: BASIC
+        buy: 45000
+        sell: 22500
+      '22':
+        material: SPAWNER
+        spawnertype: BEE
+        spawnertier: BASIC
+        buy: 75000
+        sell: 37500
+      '23':
+        material: SPAWNER
+        spawnertype: SNOWMAN
+        spawnertier: BASIC
+        buy: 50000
+        sell: 25000
+      '24':
+        material: SPAWNER
+        spawnertype: MUSHROOM_COW
+        spawnertier: BASIC
+        buy: 125000
+        sell: 62500
+      '25':
+        material: SPAWNER
+        spawnertype: AXOLOTL
+        spawnertier: BASIC
+        buy: 150000
+        sell: 75000
+      '26':
+        material: SPAWNER
+        spawnertype: ALLAY
+        spawnertier: BASIC
+        buy: 250000
+        sell: 125000
+      '27':
+        material: SPAWNER
+        spawnertype: FROG
+        spawnertier: BASIC
+        buy: 175000
+        sell: 87500
+      '28':
+        material: SPAWNER
+        spawnertype: SNIFFER
+        spawnertier: BASIC
+        buy: 200000
+        sell: 100000
 
       # ═══════ ENHANCED SPAWNERS (1.5x Spawn Rate - 3x Price) ═══════
-      '19':
+      '29':
         material: SPAWNER
         spawnertype: SKELETON
         spawnertier: ENHANCED
         buy: 150000
         sell: 75000
-      '20':
+      '30':
         material: SPAWNER
         spawnertype: ZOMBIE
         spawnertier: ENHANCED
         buy: 150000
         sell: 75000
-      '21':
+      '31':
         material: SPAWNER
         spawnertype: CREEPER
         spawnertier: ENHANCED
         buy: 225000
         sell: 112500
-      '22':
+      '32':
         material: SPAWNER
         spawnertype: BLAZE
         spawnertier: ENHANCED
@@ -174,19 +218,19 @@ pages:
         sell: 187500
 
       # ═══════ HYPER SPAWNERS (2x Spawn Rate - 6x Price) ═══════
-      '23':
+      '33':
         material: SPAWNER
         spawnertype: SKELETON
         spawnertier: HYPER
         buy: 300000
         sell: 150000
-      '24':
+      '34':
         material: SPAWNER
         spawnertype: ZOMBIE
         spawnertier: HYPER
         buy: 300000
         sell: 150000
-      '25':
+      '35':
         material: SPAWNER
         spawnertype: MAGMA_CUBE
         spawnertier: HYPER
@@ -194,127 +238,15 @@ pages:
         sell: 300000
 
       # ═══════ OMEGA SPAWNERS (3x Spawn Rate - 12x Price) ═══════
-      '26':
+      '36':
         material: SPAWNER
         spawnertype: SKELETON
         spawnertier: OMEGA
         buy: 600000
         sell: 300000
-      '27':
+      '37':
         material: SPAWNER
         spawnertype: BLAZE
         spawnertier: OMEGA
         buy: 1500000
         sell: 750000
-
-      # ═══════ RARE & LEGENDARY SPAWNERS ═══════
-      '28':
-        material: SPAWNER
-        spawnertype: ENDERMAN
-        spawnertier: BASIC
-        buy: 175000
-        sell: 87500
-      '29':
-        material: SPAWNER
-        spawnertype: SHULKER
-        spawnertier: BASIC
-        buy: 200000
-        sell: 100000
-      '30':
-        material: SPAWNER
-        spawnertype: PHANTOM
-        spawnertier: BASIC
-        buy: 150000
-        sell: 75000
-      '31':
-        material: SPAWNER
-        spawnertype: IRON_GOLEM
-        spawnertier: BASIC
-        buy: 300000
-        sell: 150000
-      '32':
-        material: SPAWNER
-        spawnertype: PIGLIN_BRUTE
-        spawnertier: BASIC
-        buy: 500000
-        sell: 250000
-
-      # ═══════ SPECIALTY SPAWNERS ═══════
-      '33':
-        material: SPAWNER
-        spawnertype: SQUID
-        spawnertier: BASIC
-        buy: 100000
-        sell: 50000
-      '34':
-        material: SPAWNER
-        spawnertype: GLOW_SQUID
-        spawnertier: BASIC
-        buy: 150000
-        sell: 75000
-      '35':
-        material: SPAWNER
-        spawnertype: SLIME
-        spawnertier: BASIC
-        buy: 200000
-        sell: 100000
-      '36':
-        material: SPAWNER
-        spawnertype: WOLF
-        spawnertier: BASIC
-        buy: 125000
-        sell: 62500
-      '37':
-        material: SPAWNER
-        spawnertype: CAT
-        spawnertier: BASIC
-        buy: 40000
-        sell: 20000
-      '38':
-        material: SPAWNER
-        spawnertype: PARROT
-        spawnertier: BASIC
-        buy: 45000
-        sell: 22500
-      '39':
-        material: SPAWNER
-        spawnertype: BEE
-        spawnertier: BASIC
-        buy: 75000
-        sell: 37500
-      '40':
-        material: SPAWNER
-        spawnertype: SNOWMAN
-        spawnertier: BASIC
-        buy: 50000
-        sell: 25000
-      '41':
-        material: SPAWNER
-        spawnertype: MUSHROOM_COW
-        spawnertier: BASIC
-        buy: 125000
-        sell: 62500
-      '42':
-        material: SPAWNER
-        spawnertype: AXOLOTL
-        spawnertier: BASIC
-        buy: 150000
-        sell: 75000
-      '43':
-        material: SPAWNER
-        spawnertype: ALLAY
-        spawnertier: BASIC
-        buy: 250000
-        sell: 125000
-      '44':
-        material: SPAWNER
-        spawnertype: FROG
-        spawnertier: BASIC
-        buy: 175000
-        sell: 87500
-      '45':
-        material: SPAWNER
-        spawnertype: SNIFFER
-        spawnertier: BASIC
-        buy: 200000
-        sell: 100000

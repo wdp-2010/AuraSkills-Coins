@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.EnchantmentStorageMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.HashMap;
@@ -62,31 +63,27 @@ public class ShopItem {
     private final CurrencyType currency;
     private final EntityType spawnerType;
     private final SpawnerTier spawnerTier;
-    private final boolean isSpawnerPack;
     private final int packSize;
-    private final boolean isMysteryBox;
-    private final double mysteryRarity;
 
     public ShopItem(Material material, double buyPrice, double sellPrice) {
         this(material, buyPrice, sellPrice, new HashMap<>(), ItemType.REGULAR, null, 0, CurrencyType.COINS,
-             null, null, false, 1, false, 0);
+             null, null, 1);
     }
 
     public ShopItem(Material material, double buyPrice, double sellPrice, Map<Enchantment, Integer> enchantments) {
         this(material, buyPrice, sellPrice, enchantments, ItemType.REGULAR, null, 0, CurrencyType.COINS,
-             null, null, false, 1, false, 0);
+             null, null, 1);
     }
 
     public ShopItem(Material material, double buyPrice, double sellPrice, Map<Enchantment, Integer> enchantments,
                     ItemType type, String skillName, int tokenAmount, CurrencyType currency) {
         this(material, buyPrice, sellPrice, enchantments, type, skillName, tokenAmount, currency,
-             null, null, false, 1, false, 0);
+             null, null, 1);
     }
 
     public ShopItem(Material material, double buyPrice, double sellPrice, Map<Enchantment, Integer> enchantments,
                     ItemType type, String skillName, int tokenAmount, CurrencyType currency,
-                    EntityType spawnerType, SpawnerTier spawnerTier, boolean isSpawnerPack, int packSize,
-                    boolean isMysteryBox, double mysteryRarity) {
+                    EntityType spawnerType, SpawnerTier spawnerTier, int packSize) {
         this.material = material;
         this.buyPrice = buyPrice;
         this.sellPrice = sellPrice;
@@ -97,10 +94,7 @@ public class ShopItem {
         this.currency = currency;
         this.spawnerType = spawnerType;
         this.spawnerTier = spawnerTier;
-        this.isSpawnerPack = isSpawnerPack;
         this.packSize = packSize;
-        this.isMysteryBox = isMysteryBox;
-        this.mysteryRarity = mysteryRarity;
     }
 
     public Material getMaterial() {
@@ -144,7 +138,7 @@ public class ShopItem {
     }
 
     public boolean canSell() {
-        return sellPrice >= 0 && type == ItemType.REGULAR;
+        return sellPrice >= 0;
     }
 
     public boolean isSpawner() {
@@ -159,34 +153,8 @@ public class ShopItem {
         return spawnerTier;
     }
 
-    public boolean isSpawnerPack() {
-        return isSpawnerPack;
-    }
-
     public int getPackSize() {
         return packSize;
-    }
-
-    public boolean isMysteryBox() {
-        return isMysteryBox;
-    }
-
-    public double getMysteryRarity() {
-        return mysteryRarity;
-    }
-
-    public double getEffectiveBuyPrice() {
-        if (isSpawnerPack && packSize > 1) {
-            return buyPrice;
-        }
-        return buyPrice;
-    }
-
-    public int getEffectiveAmount() {
-        if (isSpawnerPack) {
-            return packSize;
-        }
-        return 1;
     }
 
     public ItemStack createItemStack(int amount) {
@@ -197,12 +165,22 @@ public class ShopItem {
         ItemStack item = new ItemStack(material, amount);
 
         if (!enchantments.isEmpty()) {
-            ItemMeta meta = item.getItemMeta();
-            if (meta != null) {
-                for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-                    meta.addEnchant(entry.getKey(), entry.getValue(), true);
+            if (material == Material.ENCHANTED_BOOK) {
+                EnchantmentStorageMeta meta = (EnchantmentStorageMeta) item.getItemMeta();
+                if (meta != null) {
+                    for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                        meta.addStoredEnchant(entry.getKey(), entry.getValue(), true);
+                    }
+                    item.setItemMeta(meta);
                 }
-                item.setItemMeta(meta);
+            } else {
+                ItemMeta meta = item.getItemMeta();
+                if (meta != null) {
+                    for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                        meta.addEnchant(entry.getKey(), entry.getValue(), true);
+                    }
+                    item.setItemMeta(meta);
+                }
             }
         }
 
@@ -210,22 +188,16 @@ public class ShopItem {
     }
 
     private ItemStack createSpawnerItemStack(int amount) {
-        ItemStack item = new ItemStack(material, amount);
+        ItemStack item = new ItemStack(Material.SPAWNER, amount);
         ItemMeta meta = item.getItemMeta();
 
         if (meta != null) {
             String displayName;
 
-            if (isMysteryBox) {
-                displayName = "§d§l? Mystery Spawner Box ?";
-            } else if (spawnerType != null) {
+            if (spawnerType != null) {
                 String entityName = spawnerType.name().replace("_", " ");
                 String tierPrefix = spawnerTier != null ? spawnerTier.getPrefix() : "";
                 displayName = "§a" + tierPrefix + entityName + " Spawner";
-
-                if (isSpawnerPack) {
-                    displayName = "§e" + tierPrefix + entityName + " Spawner Pack (§6x" + packSize + "§e)";
-                }
             } else {
                 displayName = "§aMonster Spawner";
             }
@@ -234,35 +206,23 @@ public class ShopItem {
 
             java.util.List<String> lore = new java.util.ArrayList<>();
 
-            if (isMysteryBox) {
+            if (spawnerType != null && spawnerTier != null) {
+                String entityName = spawnerType.name().replace("_", " ");
                 lore.add("");
-                lore.add("§7Contains a random spawner!");
-                lore.add("§7Rarity: " + getRarityDisplay());
-            } else if (spawnerType != null && spawnerTier != null) {
-                lore.add("");
-                lore.add("§7Entity: §f" + spawnerType.name().replace("_", " "));
+                lore.add("§7Entity: §f" + entityName);
                 lore.add("§7Tier: §f" + spawnerTier.name());
 
                 if (spawnerTier != SpawnerTier.BASIC) {
                     lore.add("§7Spawn Rate: §f" + String.format("%.1fx", spawnerTier.getSpawnRateMultiplier()));
-                }
-
-                if (isSpawnerPack) {
-                    lore.add("§7Amount: §f" + packSize + " spawners");
                 }
             }
 
             lore.add("");
 
             if (canBuy()) {
-                double price = getEffectiveBuyPrice();
+                double price = buyPrice;
                 String currencySymbol = currency == CurrencyType.TOKENS ? "Tokens" : "Coins";
                 lore.add("§aBuy: §f" + String.format("%,.0f", price) + " " + currencySymbol);
-
-                if (isSpawnerPack && packSize > 1) {
-                    double perUnit = price / packSize;
-                    lore.add("§7  (§f" + String.format("%,.0f", perUnit) + "§7 each)");
-                }
             } else {
                 lore.add("§cCannot buy");
             }
@@ -275,18 +235,14 @@ public class ShopItem {
                 lore.add("§cCannot sell");
             }
 
+            lore.add("");
+            lore.add("§7Left-click to purchase");
+
             meta.setLore(lore);
             item.setItemMeta(meta);
         }
 
         return item;
-    }
-
-    private String getRarityDisplay() {
-        if (mysteryRarity >= 0.8) return "§4§lLEGENDARY §7(>80%)";
-        if (mysteryRarity >= 0.5) return "§6§lEPIC §7(50-80%)";
-        if (mysteryRarity >= 0.2) return "§5§lRARE §7(20-50%)";
-        return "§9§lCOMMON §7(<20%)";
     }
 
     public boolean matches(ItemStack item) {
@@ -296,19 +252,38 @@ public class ShopItem {
 
         if (hasEnchantments()) {
             ItemMeta meta = item.getItemMeta();
-            if (meta == null || !meta.hasEnchants()) {
+            if (meta == null) {
                 return false;
             }
 
-            Map<Enchantment, Integer> itemEnchants = meta.getEnchants();
-            if (itemEnchants.size() != enchantments.size()) {
-                return false;
-            }
-
-            for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
-                Integer itemLevel = itemEnchants.get(entry.getKey());
-                if (itemLevel == null || !itemLevel.equals(entry.getValue())) {
+            if (material == Material.ENCHANTED_BOOK) {
+                if (!(meta instanceof EnchantmentStorageMeta)) {
                     return false;
+                }
+                EnchantmentStorageMeta storageMeta = (EnchantmentStorageMeta) meta;
+                Map<Enchantment, Integer> storedEnchants = storageMeta.getStoredEnchants();
+                if (storedEnchants.size() != enchantments.size()) {
+                    return false;
+                }
+                for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                    Integer itemLevel = storedEnchants.get(entry.getKey());
+                    if (itemLevel == null || !itemLevel.equals(entry.getValue())) {
+                        return false;
+                    }
+                }
+            } else {
+                if (!meta.hasEnchants()) {
+                    return false;
+                }
+                Map<Enchantment, Integer> itemEnchants = meta.getEnchants();
+                if (itemEnchants.size() != enchantments.size()) {
+                    return false;
+                }
+                for (Map.Entry<Enchantment, Integer> entry : enchantments.entrySet()) {
+                    Integer itemLevel = itemEnchants.get(entry.getKey());
+                    if (itemLevel == null || !itemLevel.equals(entry.getValue())) {
+                        return false;
+                    }
                 }
             }
         }
