@@ -145,7 +145,7 @@ public class TierSelectionMenu {
             dev.aurelium.auraskills.bukkit.skillcoins.shop.ShopLoader loader = plugin.getShopLoader();
             if (loader != null) {
                 ShopItem item = loader.getSpawnerItem(entityType, tier);
-                if (item != null) {
+                if (item != null && item.canBuy()) {
                     return item.getBuyPrice();
                 }
             }
@@ -153,7 +153,9 @@ public class TierSelectionMenu {
             plugin.getLogger().warning("Failed to get spawner price from config: " + e.getMessage());
         }
 
-        return 100000;
+        plugin.getLogger().severe("NO PRICE FOUND IN CONFIG for " + entityType + " " + tier +
+            " - Check Spawners.yml! Returning 0 to prevent sale.");
+        return 0;
     }
 
     private void addBackButton(Inventory inv) {

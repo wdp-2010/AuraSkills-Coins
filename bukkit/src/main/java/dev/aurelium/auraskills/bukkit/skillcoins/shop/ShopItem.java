@@ -250,6 +250,22 @@ public class ShopItem {
             return false;
         }
 
+        if (isSpawner()) {
+            ItemMeta meta = item.getItemMeta();
+            if (meta == null || !meta.hasDisplayName()) {
+                return false;
+            }
+
+            String displayName = meta.getDisplayName();
+            String entityName = spawnerType != null ? spawnerType.name().replace("_", " ") : "";
+            String tierPrefix = spawnerTier != null ? spawnerTier.getPrefix() : "";
+
+            String expectedName = "§a" + tierPrefix + entityName + " Spawner";
+            if (!displayName.equals(expectedName)) {
+                return false;
+            }
+        }
+
         if (hasEnchantments()) {
             ItemMeta meta = item.getItemMeta();
             if (meta == null) {

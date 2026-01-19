@@ -1,18 +1,18 @@
 # ╔══════════════════════════════════════════════════════════════════════════════╗
-# ║                    ENCHANTMENTS SHOP - BALANCED ECONOMY V2                    ║
+# ║                    ENCHANTMENTS SHOP - COINS ONLY                              ║
 # ╠══════════════════════════════════════════════════════════════════════════════╣
-# ║ Pricing Philosophy:                                                           ║
-# ║ - PREMIUM SECTION: Uses TOKENS not coins (1 token = 1000 coins)                ║
-# ║ - Enchantments bypass the grind but require commitment                        ║
-# ║ - Common enchants: 1-3 tokens (1000-3000 coin equivalent)                      ║
-# ║ - Powerful enchants: 5-15 tokens (2500-7500 coin equivalent)                  ║
-# ║ - Top tier: 20-50 tokens (10000-25000 coin equivalent)                        ║
-# ║ - This makes enchant farming still valuable vs buying                         ║
+# ║ ALL ITEMS PURCHASABLE WITH COINS ONLY!                                        ║
+# ║ - Token exchange is separate (1000 coins = 1 token)                           ║
+# ║ - Enchantments bypass the grind at fair prices                                ║
+# ║ - Common enchants: 1,000-5,000 coins                                          ║
+# ║ - Powerful enchants: 5,000-15,000 coins                                       ║
+# ║ - Top tier: 15,000-30,000 coins                                               ║
 # ╚══════════════════════════════════════════════════════════════════════════════╝
+
 pages:
   page1:
     items:
-      # ═══════ ENCHANTING MATERIALS (COINS) ═══════
+      # ═══════ ENCHANTING MATERIALS ═══════
       '1':
         material: LAPIS_LAZULI
         buy: 6
@@ -37,242 +37,213 @@ pages:
         material: ANVIL
         buy: 200
         sell: 60
-      
-      # ═══════ PROTECTION ENCHANTS (TOKENS) ═══════
-      # Protection is very useful, moderate token cost
+
+      # ═══════ PROTECTION ENCHANTS ═══════
       '7':
         material: ENCHANTED_BOOK
         enchantments:
           protection: 4
-        buy_currency: tokens
-        buy: 8
-        sell: 0
+        buy: 8000
+        sell: 4000
         name: "&bProtection IV"
       '8':
         material: ENCHANTED_BOOK
         enchantments:
           fire_protection: 4
-        buy_currency: tokens
-        buy: 5
-        sell: 0
+        buy: 5000
+        sell: 2500
         name: "&6Fire Protection IV"
       '9':
         material: ENCHANTED_BOOK
         enchantments:
           blast_protection: 4
-        buy_currency: tokens
-        buy: 5
-        sell: 0
+        buy: 5000
+        sell: 2500
         name: "&8Blast Protection IV"
       '10':
         material: ENCHANTED_BOOK
         enchantments:
           projectile_protection: 4
-        buy_currency: tokens
-        buy: 5
-        sell: 0
+        buy: 5000
+        sell: 2500
         name: "&7Projectile Protection IV"
       '11':
         material: ENCHANTED_BOOK
         enchantments:
           feather_falling: 4
-        buy_currency: tokens
-        buy: 4
-        sell: 0
+        buy: 4000
+        sell: 2000
         name: "&fFeather Falling IV"
       '12':
         material: ENCHANTED_BOOK
         enchantments:
           thorns: 3
-        buy_currency: tokens
-        buy: 6
-        sell: 0
+        buy: 6000
+        sell: 3000
         name: "&aThorns III"
-      
-      # ═══════ WEAPON ENCHANTS (TOKENS) ═══════
+
+      # ═══════ WEAPON ENCHANTS ═══════
       '13':
         material: ENCHANTED_BOOK
         enchantments:
           sharpness: 5
-        buy_currency: tokens
-        buy: 12
-        sell: 0
+        buy: 12000
+        sell: 6000
         name: "&cSharpness V"
       '14':
         material: ENCHANTED_BOOK
         enchantments:
           smite: 5
-        buy_currency: tokens
-        buy: 6
-        sell: 0
+        buy: 6000
+        sell: 3000
         name: "&eSmite V"
       '15':
         material: ENCHANTED_BOOK
         enchantments:
           bane_of_arthropods: 5
-        buy_currency: tokens
-        buy: 4
-        sell: 0
+        buy: 4000
+        sell: 2000
         name: "&2Bane of Arthropods V"
       '16':
         material: ENCHANTED_BOOK
         enchantments:
           fire_aspect: 2
-        buy_currency: tokens
-        buy: 5
-        sell: 0
+        buy: 5000
+        sell: 2500
         name: "&6Fire Aspect II"
       '17':
         material: ENCHANTED_BOOK
         enchantments:
           looting: 3
-        buy_currency: tokens
-        buy: 10
-        sell: 0
+        buy: 10000
+        sell: 5000
         name: "&aLooting III"
       '18':
         material: ENCHANTED_BOOK
         enchantments:
           knockback: 2
-        buy_currency: tokens
-        buy: 3
-        sell: 0
+        buy: 3000
+        sell: 1500
         name: "&9Knockback II"
-      
-      # ═══════ TOOL ENCHANTS (TOKENS) ═══════
+
+      # ═══════ TOOL ENCHANTS ═══════
       '19':
         material: ENCHANTED_BOOK
         enchantments:
           efficiency: 5
-        buy_currency: tokens
-        buy: 8
-        sell: 0
+        buy: 8000
+        sell: 4000
         name: "&bEfficiency V"
       '20':
         material: ENCHANTED_BOOK
         enchantments:
           fortune: 3
-        buy_currency: tokens
-        buy: 15
-        sell: 0
+        buy: 15000
+        sell: 7500
         name: "&aFortune III"
       '21':
         material: ENCHANTED_BOOK
         enchantments:
           silk_touch: 1
-        buy_currency: tokens
-        buy: 12
-        sell: 0
+        buy: 12000
+        sell: 6000
         name: "&dSilk Touch"
       '22':
         material: ENCHANTED_BOOK
         enchantments:
           unbreaking: 3
-        buy_currency: tokens
-        buy: 10
-        sell: 0
+        buy: 10000
+        sell: 5000
         name: "&7Unbreaking III"
-      
-      # ═══════ PREMIUM ENCHANTS (HIGH TOKENS) ═══════
+
+      # ═══════ PREMIUM ENCHANTS ═══════
       '23':
         material: ENCHANTED_BOOK
         enchantments:
           mending: 1
-        buy_currency: tokens
-        buy: 25
-        sell: 0
+        buy: 25000
+        sell: 12500
         name: "&6&lMending"
       '24':
         material: ENCHANTED_BOOK
         enchantments:
           infinity: 1
-        buy_currency: tokens
-        buy: 18
-        sell: 0
+        buy: 18000
+        sell: 9000
         name: "&b&lInfinity"
-      
-      # ═══════ BOW ENCHANTS (TOKENS) ═══════
+
+      # ═══════ BOW ENCHANTS ═══════
       '25':
         material: ENCHANTED_BOOK
         enchantments:
           power: 5
-        buy_currency: tokens
-        buy: 10
-        sell: 0
+        buy: 10000
+        sell: 5000
         name: "&cPower V"
       '26':
         material: ENCHANTED_BOOK
         enchantments:
           punch: 2
-        buy_currency: tokens
-        buy: 4
-        sell: 0
+        buy: 4000
+        sell: 2000
         name: "&aPunch II"
       '27':
         material: ENCHANTED_BOOK
         enchantments:
           flame: 1
-        buy_currency: tokens
-        buy: 5
-        sell: 0
+        buy: 5000
+        sell: 2500
         name: "&6Flame"
-      
-      # ═══════ TRIDENT ENCHANTS (TOKENS) ═══════
+
+      # ═══════ TRIDENT ENCHANTS ═══════
       '28':
         material: ENCHANTED_BOOK
         enchantments:
           riptide: 3
-        buy_currency: tokens
-        buy: 8
-        sell: 0
+        buy: 8000
+        sell: 4000
         name: "&3Riptide III"
       '29':
         material: ENCHANTED_BOOK
         enchantments:
           loyalty: 3
-        buy_currency: tokens
-        buy: 6
-        sell: 0
+        buy: 6000
+        sell: 3000
         name: "&bLoyalty III"
       '30':
         material: ENCHANTED_BOOK
         enchantments:
           channeling: 1
-        buy_currency: tokens
-        buy: 7
-        sell: 0
+        buy: 7000
+        sell: 3500
         name: "&eChanneling"
       '31':
         material: ENCHANTED_BOOK
         enchantments:
           impaling: 5
-        buy_currency: tokens
-        buy: 6
-        sell: 0
+        buy: 6000
+        sell: 3000
         name: "&9Impaling V"
-      
-      # ═══════ UTILITY ENCHANTS (TOKENS) ═══════
+
+      # ═══════ UTILITY ENCHANTS ═══════
       '32':
         material: ENCHANTED_BOOK
         enchantments:
           respiration: 3
-        buy_currency: tokens
-        buy: 4
-        sell: 0
+        buy: 4000
+        sell: 2000
         name: "&3Respiration III"
       '33':
         material: ENCHANTED_BOOK
         enchantments:
           aqua_affinity: 1
-        buy_currency: tokens
-        buy: 3
-        sell: 0
+        buy: 3000
+        sell: 1500
         name: "&3Aqua Affinity"
       '34':
         material: ENCHANTED_BOOK
         enchantments:
           depth_strider: 3
-        buy_currency: tokens
-        buy: 5
-        sell: 0
+        buy: 5000
+        sell: 2500
         name: "&3Depth Strider III"

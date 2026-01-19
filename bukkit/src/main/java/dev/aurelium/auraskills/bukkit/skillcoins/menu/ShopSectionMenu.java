@@ -442,8 +442,17 @@ public class ShopSectionMenu {
             
             boolean isBuying = clickType.isLeftClick();
             boolean isSelling = clickType.isRightClick();
-            
-            if (isBuying && shopItem.canBuy()) {
+
+            if (shopItem.isSpawner() && isBuying && shopItem.canBuy()) {
+                playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
+                try {
+                    TierSelectionMenu tierMenu = new TierSelectionMenu(plugin, economy);
+                    tierMenu.open(player, shopItem.getSpawnerType());
+                } catch (Exception e) {
+                    plugin.getLogger().log(Level.SEVERE, "Error opening tier selection", e);
+                    player.sendMessage(ChatColor.of("#FF5555") + "✖ Error opening tier menu!");
+                }
+            } else if (isBuying && shopItem.canBuy()) {
                 playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
                 try {
                     new TransactionMenu(plugin, economy, shopItem, true, section).open(player);

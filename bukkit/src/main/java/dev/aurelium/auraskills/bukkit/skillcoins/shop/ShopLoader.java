@@ -20,12 +20,15 @@ public class ShopLoader {
     private final AuraSkills plugin;
     private final File sectionsFolder;
     private final File shopsFolder;
+    private final File shopConfigFile;
     private final List<ShopSection> sections;
+    private double tokenExchangeRate;
 
     public ShopLoader(AuraSkills plugin) {
         this.plugin = plugin;
         this.sectionsFolder = new File(plugin.getDataFolder(), "SkillCoinsShop/sections");
         this.shopsFolder = new File(plugin.getDataFolder(), "SkillCoinsShop/shops");
+        this.shopConfigFile = new File(plugin.getDataFolder(), "shop-config.yml");
         this.sections = new ArrayList<>();
     }
 
@@ -270,7 +273,37 @@ public class ShopLoader {
     }
 
     public double getTokenExchangeRate() {
-        return 1000;
+        if (tokenExchangeRate <= 0) {
+            loadShopConfig();
+        }
+        if (tokenExchangeRate <= 0) {
+            plugin.getLogger().warning("Invalid token exchange rate, using default 1000");
+            return 1000;
+        }
+        return tokenExchangeRate;
+    }
+
+    private void loadShopConfig() {
+        if (!shopConfigFile.exists()) {
+            plugin.getLogger().warning("shop-config.yml not found, using default token rate");
+            tokenExchangeRate = 1000;
+            return;
+        }
+
+        try {
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(shopConfigFile);
+            ConfigurationSection tokenSection = config.getConfigurationSection("token-exchange");
+            if (tokenSection != null) {
+                tokenExchangeRate = tokenSection.getDouble("coins-per-token", 1000);
+                plugin.getLogger().info("Loaded token exchange rate: " + tokenExchangeRate + " coins per token");
+            } else {
+                tokenExchangeRate = 1000;
+                plugin.getLogger().warning("token-exchange section not found in shop-config.yml");
+            }
+        } catch (Exception e) {
+            tokenExchangeRate = 1000;
+            plugin.getLogger().warning("Failed to load shop-config.yml: " + e.getMessage());
+        }
     }
 
     private void copyDefaultConfigs() {
