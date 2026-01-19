@@ -28,22 +28,23 @@ public class SpawnerConfirmMenu {
     private final EconomyProvider economy;
     private final EntityType entityType;
     private final ShopItem.SpawnerTier tier;
-    private final String menuTitle;
+    private final String menuTitle = ChatColor.of("#FFD700") + "Confirm Purchase";
     private static final DecimalFormat MONEY_FORMAT = new DecimalFormat("#,##0");
+    private static final int MENU_SIZE = 45;
+    private static final int[] NAVBAR_SLOTS = {36, 37, 38, 39, 40, 41, 42, 43, 44};
 
     public SpawnerConfirmMenu(AuraSkills plugin, EconomyProvider economy, EntityType entityType, ShopItem.SpawnerTier tier) {
         this.plugin = plugin;
         this.economy = economy;
         this.entityType = entityType;
         this.tier = tier;
-        this.menuTitle = ChatColor.of("#FFD700") + "Confirm Purchase";
     }
 
     public void open(Player player) {
         if (player == null || !player.isOnline()) return;
 
         try {
-            Inventory inv = Bukkit.createInventory(null, 27, menuTitle);
+            Inventory inv = Bukkit.createInventory(null, MENU_SIZE, menuTitle);
 
             fillBorder(inv);
             addDenyButton(inv);
@@ -51,6 +52,7 @@ public class SpawnerConfirmMenu {
             addExplanationPaper(inv);
             addSpawnerPreview(inv);
             addBackButton(inv);
+            addNavbar(inv);
 
             player.openInventory(inv);
 
@@ -72,8 +74,9 @@ public class SpawnerConfirmMenu {
             border.setItemMeta(meta);
         }
 
-        for (int i = 0; i < 27; i++) {
-            if (i < 9 || i >= 18) {
+        for (int i = 0; i < MENU_SIZE; i++) {
+            boolean isNavbarArea = i >= 36 && i <= 44;
+            if (!isNavbarArea && (i < 9 || i >= 27 || (i > 6 && i < 36))) {
                 inv.setItem(i, border);
             }
         }
@@ -91,7 +94,7 @@ public class SpawnerConfirmMenu {
             meta.setLore(lore);
             deny.setItemMeta(meta);
         }
-        inv.setItem(0, deny);
+        inv.setItem(2, deny);
     }
 
     private void addConfirmButton(Inventory inv) {
@@ -106,7 +109,7 @@ public class SpawnerConfirmMenu {
             meta.setLore(lore);
             confirm.setItemMeta(meta);
         }
-        inv.setItem(8, confirm);
+        inv.setItem(6, confirm);
     }
 
     private void addExplanationPaper(Inventory inv) {
@@ -196,6 +199,37 @@ public class SpawnerConfirmMenu {
         inv.setItem(26, back);
     }
 
+    private void addNavbar(Inventory inv) {
+        ItemStack back = new ItemStack(Material.SPYGLASS);
+        ItemMeta backMeta = back.getItemMeta();
+        if (backMeta != null) {
+            backMeta.setDisplayName(ChatColor.RED + "← Back to Shop");
+            back.setItemMeta(backMeta);
+        }
+        inv.setItem(36, back);
+
+        ItemStack pageInfo = new ItemStack(Material.PAPER);
+        ItemMeta pageMeta = pageInfo.getItemMeta();
+        if (pageMeta != null) {
+            pageMeta.setDisplayName(ChatColor.of("#FFD700") + "Confirm Purchase");
+            List<String> lore = new ArrayList<>();
+            lore.add("");
+            lore.add(ChatColor.of("#808080") + "Review your purchase");
+            lore.add(ChatColor.of("#808080") + "before confirming");
+            pageMeta.setLore(lore);
+            pageInfo.setItemMeta(pageMeta);
+        }
+        inv.setItem(40, pageInfo);
+
+        ItemStack home = new ItemStack(Material.BOOK);
+        ItemMeta homeMeta = home.getItemMeta();
+        if (homeMeta != null) {
+            homeMeta.setDisplayName(ChatColor.of("#00FFFF") + "✦ Main Menu");
+            home.setItemMeta(homeMeta);
+        }
+        inv.setItem(44, home);
+    }
+
     private double getPriceFromConfig() {
         try {
             dev.aurelium.auraskills.bukkit.skillcoins.shop.ShopLoader loader = plugin.getShopLoader();
@@ -228,9 +262,9 @@ public class SpawnerConfirmMenu {
 
         int slot = event.getSlot();
 
-        if (slot == 8) {
+        if (slot == 6) {
             performPurchase(player);
-        } else if (slot == 0) {
+        } else if (slot == 2) {
             playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 0.9f);
             player.closeInventory();
             TierSelectionMenu tierMenu = new TierSelectionMenu(plugin, economy);
@@ -240,6 +274,20 @@ public class SpawnerConfirmMenu {
             player.closeInventory();
             TierSelectionMenu tierMenu = new TierSelectionMenu(plugin, economy);
             tierMenu.open(player, entityType);
+        } else if (slot == 36) {
+            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
+            player.closeInventory();
+            MenuManager manager = MenuManager.getInstance(plugin);
+            if (manager != null) {
+                manager.openMainMenu(player);
+            }
+        } else if (slot == 44) {
+            playSound(player, Sound.UI_BUTTON_CLICK, 0.5f, 1.0f);
+            player.closeInventory();
+            MenuManager manager = MenuManager.getInstance(plugin);
+            if (manager != null) {
+                manager.openMainMenu(player);
+            }
         }
     }
 

@@ -69,13 +69,15 @@ public class BukkitUiProvider implements UiProvider {
         Player player = ((BukkitUser) user).getPlayer();
         if (player == null) return;
 
-        // Check for WDP-Start bossbar suppression via reflection (same pattern as level up suppression)
+        // Check for WDP-Start bossbar suppression via reflection
+        // By default: AuraSkills bossbar is shown (suppress = false)
         try {
             Class<?> apiClass = Class.forName("com.wdp.start.api.WDPStartAPI");
             java.lang.reflect.Method isAvailable = apiClass.getMethod("isAvailable");
             Object available = isAvailable.invoke(null);
             if (available instanceof Boolean && (Boolean) available) {
-                java.lang.reflect.Method shouldSuppress = apiClass.getMethod("shouldSuppressBossBar", org.bukkit.entity.Player.class);
+                // Get the method with proper parameter type
+                java.lang.reflect.Method shouldSuppress = apiClass.getMethod("shouldSuppressBossBar", Player.class);
                 Object suppress = shouldSuppress.invoke(null, player);
                 if (suppress instanceof Boolean && (Boolean) suppress) {
                     // WDP-Start wants to show tutorial bossbar for this player, so skip AuraSkills bossbar
@@ -84,6 +86,8 @@ public class BukkitUiProvider implements UiProvider {
             }
         } catch (ClassNotFoundException e) {
             // WDP-Start not installed; ignore
+        } catch (NoSuchMethodException e) {
+            // Method signature changed in WDP-Start; ignore
         } catch (Exception e) {
             // If reflection fails, log at debug level and continue to send bossbar
             plugin.logger().debug("Error checking WDP-Start bossbar suppression: " + e.getMessage());
